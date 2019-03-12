@@ -14,11 +14,11 @@ using System.Threading.Tasks;
 
 namespace Picture3D.AnaglyphApi
 {
-    class VideoToFrames 
+    class VideoToFrames
     {
         public static VideoToFrames videoToFrames { get; } = new VideoToFrames();
-        VideoFileReader reader ;
-        VideoFileWriter writer ;
+        VideoFileReader reader;
+        VideoFileWriter writer;
         string alghorithmType = "Color Anaglyph";
         string pathToWrite = "";
         Uri pathToFile;
@@ -111,25 +111,28 @@ namespace Picture3D.AnaglyphApi
         //    writer.Close();
         //    reader.Close();
         //}
-        public void ReadFromVideo()
+        public void ReadFromVideo(string path)
         {
-            Uri pathToFile;
-            System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog();
-            ofd.Filter = "Video file (*.avi;*.mp4,*.wmv)|*.avi;*.mp4;*.wmv";
-            if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                pathToFile = new Uri(ofd.FileName);
-                reader.Open(pathToFile.LocalPath);
-                pathToWrite = pathToFile.LocalPath.Split('.')[0] + "1.mp4";
-                writer.Open(pathToWrite, reader.Width, reader.Height);
-            }
+            //Uri pathToFile;
+            //System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog();
+            //ofd.Filter = "Video file (*.avi;*.mp4,*.wmv)|*.avi;*.mp4;*.wmv";
+            //if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            //{
+            pathToFile = new Uri(path);
+            reader.Open(pathToFile.LocalPath);
+            pathToWrite = pathToFile.LocalPath.Split('.')[0] + "1.mp4";
+
+            //writer.Open(pathToWrite, reader.Width, reader.Height,reader.FrameRate,VideoCodec.H264,reader.BitRate);
+            writer.Open(pathToWrite, reader.Width, reader.Height);
+
+            //}
 
 
             // open video file
             // reader.Open("small.mp4");
 
             // read 100 video frames out of it
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < reader.FrameCount; i++)
             {
                 try
                 {

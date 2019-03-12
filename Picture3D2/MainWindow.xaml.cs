@@ -8,6 +8,7 @@ using Picture3D.AnaglyphApi;
 using MediaSampleWPF;
 using System.Drawing.Imaging;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Picture3D
 {
@@ -196,11 +197,23 @@ namespace Picture3D
             ConvertedImage.Source = response.image;
             ConvertedImageTextBox.Text = response.location;
 
-            //Update gui with new values for filters
-            VideoToFrames.videoToFrames.ReadFromVideo();
+            System.Windows.Forms.OpenFileDialog ofd =
+                new System.Windows.Forms.OpenFileDialog {Filter = "Video file (*.avi;*.mp4,*.wmv)|*.avi;*.mp4;*.wmv"};
+            if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                Task.Factory.StartNew(() =>
+                    ExpGenMethod(ofd.FileName));
+            }
+
             SetFilterValues();
             
         }
+        public void ExpGenMethod(string path)
+        {
+            VideoToFrames.videoToFrames.ReadFromVideo(path);
+
+        }
+
         private void SetFilterValues()
         {
             slColorR.Value = AnaglyphParameters.RedVolume;

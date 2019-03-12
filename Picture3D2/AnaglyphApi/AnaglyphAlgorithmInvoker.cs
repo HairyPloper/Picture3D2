@@ -41,7 +41,6 @@ namespace AnaglyphGenerator.Models
 
         public Bitmap Apply(Bitmap Image)
         {
-            System.Diagnostics.Debug.WriteLine("SSSSS");
             return algorithm.Calc(Image);
         }
 
