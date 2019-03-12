@@ -1,0 +1,60 @@
+﻿<Window x:Class="Picture3D.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Picture3D"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="530" Width="1200" MinHeight="450" MinWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Border BorderThickness="2" BorderBrush="#FF000000"  Grid.Row="2" Grid.Column="0" Margin="10,10,10,10">
+            <Image Name="MainImage" Margin="0,0,-2,0" />
+        </Border>
+        <Border BorderThickness="2" BorderBrush="#FF000000"  Grid.Row="2" Grid.Column="1" Margin="10,10,10,10">
+            <Image Name="ConvertedImage" />
+        </Border>
+        <StackPanel x:Name="filterPanel" Grid.Row="2" Grid.Column="2" IsEnabled="False" Margin="10" VerticalAlignment="Center">
+            <DockPanel HorizontalAlignment="Center">
+                <Label>
+                    RGB sliders
+                </Label>
+            </DockPanel>
+            <Rectangle Height="10"/>
+            <DockPanel VerticalAlignment="Center" Margin="10">
+                <Label DockPanel.Dock="Left" FontWeight="Bold" VerticalAlignment="Bottom">R:</Label>
+                <TextBox Text="{Binding ElementName=slColorR, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right"  TextAlignment="Center" VerticalContentAlignment="Center" Width="40" />
+                <Slider Maximum="255" Minimum="0" TickPlacement="TopLeft"  Name="slColorR" ValueChanged="ColorSlider_ValueChangedRed" Margin="3" TickFrequency="1" IsSnapToTickEnabled="True" />
+            </DockPanel>
+            <Rectangle Height="10"/>
+            <DockPanel VerticalAlignment="Center" Margin="10">
+                <Label DockPanel.Dock="Left" VerticalAlignment="Bottom" FontWeight="Bold">G:</Label>
+                <TextBox Text="{Binding ElementName=slColorG, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Center" VerticalContentAlignment="Center" Width="40" />
+                <Slider Maximum="255" Minimum="0" TickPlacement="TopLeft" Name="slColorG" ValueChanged="ColorSlider_ValueChangedGreen" Margin="3" TickFrequency="1" IsSnapToTickEnabled="True" />
+            </DockPanel>
+            <Rectangle Height="10"/>
+            <DockPanel VerticalAlignment="Center" Margin="10">
+                <Label DockPanel.Dock="Left" FontWeight="Bold" VerticalAlignment="Bottom" >B:</Label>
+                <TextBox Text="{Binding ElementName=slColorB, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Center" VerticalContentAlignment="Center" Width="40" />
+                <Slider Maximum="255" Minimum="0" TickPlacement="TopLeft"  Name="slColorB" ValueChanged="ColorSlider_ValueChangedBlue" Margin="3" TickFrequency="1" IsSnapToTickEnabled="True" />
+            </DockPanel>
+            <Rectangle Height="30"/>
+            <DockPanel Margin="10,0">
+                <Button x:Name="RegenerateButton" HorizontalAlignment="Center" VerticalAlignment="Top" Content="Refresh" Click="ColorAnaglyphMenu_Click" Width="85" Height="30" Margin="5"/>
+                <Button x:Name="CancelButton" Content="Cancel" Click="Cancel_Click" HorizontalAlignment="Center" VerticalAlignment="Top" Width="85" Height="30" Margin="5" />
+
+            </DockPanel>
+            <DockPanel Margin="10">
+                    <Button x:Name="OpenFolderButton" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="Open screenshots folder" Click="OpenFolder_Click" Width="180" Height="30" Margin="5"/>
+                
+            </DockPanel>
+        </StackPanel>
+        <TextBox x:Name="MainImageTextBox" HorizontalAlignment="Left" Height="23" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Width="457" Margin="10,22,0,5" IsReadOnly="True" Visibility="Hidden"/>
+        <TextBox x:Name="ConvertedImageTextBox" HorizontalAlignment="Left" Height="23" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Width="457" Margin="10,22,0,5" Grid.Column="1" IsReadOnly="True" Visibility="Hidden"/>
+
+    </Grid>
+</Window>

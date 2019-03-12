@@ -1,0 +1,41 @@
+﻿<Window x:Class="MediaSampleWPF.Window1"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Media Element Sample" Height="440" Width="700">
+    <Grid x:Name="LayoutRoot">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5*" />
+            <RowDefinition Height="1*" />
+
+        </Grid.RowDefinitions>
+        <MediaElement x:Name="MediaEL" MediaOpened="MediaEL_MediaOpened"
+                      LoadedBehavior="Manual" MouseLeftButtonUp="MediaEL_MouseLeftButtonUp"/>
+        <StackPanel Orientation="Vertical" Margin="10,0" Grid.Row="1" MinWidth="470">
+            <Rectangle Height="5"/>
+
+            <StackPanel x:Name="SPSeekBar" HorizontalAlignment="Stretch">
+                <Slider x:Name="seekBar" Thumb.DragStarted="seekBar_DragStarted" 
+                        Thumb.DragCompleted="seekBar_DragCompleted"/>
+            </StackPanel>
+
+            <Rectangle Height="5"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button x:Name="btnPlay" Content="Play" Click="btnPlay_Click" 
+                    Width="50" Height="25" Margin="2"/>
+                <Button x:Name="btnStop" Content="Stop" Click="btnStop_Click"  
+                    Width="50" Height="25" Margin="2"/>
+                <Button x:Name="btnMoveBackward" Content="Back" Click="btnMoveBackward_Click"  
+                    Width="50" Height="25" Margin="2" />
+                <Button x:Name="btnMoveForward" Content="Forward" Click="btnMoveForward_Click"  
+                    Width="50" Height="25" Margin="2" />
+                <Button x:Name="btnOpen" Content="Open" Click="btnOpen_Click"  
+                    Width="50" Height="25" Margin="2"/>
+                <Button x:Name="btnScreenShot" Content="Capture Screenshot" Click="btnScreenShot_Click" Width="120" Height="25" />
+                <Slider Name="volumeSlider" VerticalAlignment="Center" HorizontalAlignment="Right" ValueChanged="ChangeMediaVolume" 
+       Minimum="0" Maximum="1" Value="0.5" Width="90" Margin="2" />
+
+            </StackPanel>
+
+        </StackPanel>
+    </Grid>
+</Window>
