@@ -102,46 +102,7 @@ namespace Picture3D
 
         private void ColorAnaglyphMenu_Click(dynamic sender, RoutedEventArgs e)
         {
-            string selectedAlgorithm = "";
-            if (sender.Name == "RegenerateButton")
-            {
-                selectedAlgorithm = "Color Anaglyph";
-            }
-            else
-            {
-                selectedAlgorithm = sender.Header;
-
-            }
-            ConvertedImage.Source = null;
-            string imgLocation = "";
-            Bitmap imagebmp;
-            try
-            {
-                if (MainImage.Source == null)
-                    throw new Exception("Load image first.");
-
-                //if (this.CurrentAlgorythm != selectedAlgorithm)
-                //{
-                //    AnaglyphParameters.ResetParameters();
-                //    SetFilterValues();
-                //    CurrentAlgorythm = selectedAlgorithm;
-                //}
-
-                imagebmp = new Bitmap((string)MainImageTextBox.Text); // location for image
-
-                BackgroundHelperRequest arguments = new BackgroundHelperRequest()
-                {
-                    image = imagebmp,
-                    selectedAlgorythm = selectedAlgorithm,
-                };
-
-                worker.RunWorkerAsync(argument: arguments);
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine(exception);
-                System.Windows.Forms.MessageBox.Show(exception.Message);
-            }
+           
            
         }
 
@@ -236,6 +197,48 @@ namespace Picture3D
         {
             Process.Start(baseURI + @"/ScreenShots");
         }
+        private void ApplyToVideo_Click(dynamic sender, RoutedEventArgs e)
+        {
+            string selectedAlgorithm = "";
+            if (sender.Name == "ApplyToVideo")
+            {
+                selectedAlgorithm = "Color Anaglyph";
+            }
+            else
+            {
+                selectedAlgorithm = sender.Header;
 
+            }
+            ConvertedImage.Source = null;
+            string imgLocation = "";
+            Bitmap imagebmp;
+            try
+            {
+                if (MainImage.Source == null)
+                    throw new Exception("Load image first.");
+
+                //if (this.CurrentAlgorythm != selectedAlgorithm)
+                //{
+                //    AnaglyphParameters.ResetParameters();
+                //    SetFilterValues();
+                //    CurrentAlgorythm = selectedAlgorithm;
+                //}
+
+                imagebmp = new Bitmap((string)MainImageTextBox.Text); // location for image
+
+                BackgroundHelperRequest arguments = new BackgroundHelperRequest()
+                {
+                    image = imagebmp,
+                    selectedAlgorythm = selectedAlgorithm,
+                };
+
+                worker.RunWorkerAsync(argument: arguments);
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+                System.Windows.Forms.MessageBox.Show(exception.Message);
+            }
+        }
     }
 }
