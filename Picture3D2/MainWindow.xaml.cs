@@ -20,6 +20,8 @@ namespace Picture3D
         private int n;
         private string baseURI = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         private Window1 _windowOne;
+        private bool sample = false;
+        public static MainWindow mainWindow;
         public MainWindow(Window1 win, int n)
         {
             this.n = n;
@@ -30,9 +32,13 @@ namespace Picture3D
             worker.RunWorkerCompleted += worker_RunWorkerCompleted;
             worker.WorkerReportsProgress = true;
             CurrentAlgorythm = "";
+            mainWindow = this;
             
         }
-
+        public static MainWindow GetMainWindow()
+        {
+            return mainWindow;
+        }
         private readonly BackgroundWorker worker = new BackgroundWorker();
         private string CurrentAlgorythm { get; set; }
 
@@ -170,7 +176,18 @@ namespace Picture3D
             
         }
         public void ExpGenMethod(string path)
-        {
+        {   if(sample)
+            {
+                VideoToFrames.videoToFrames.ReadFromVideoHundred(path);
+                Application.Current.Dispatcher.Invoke((Action)delegate {
+                    Window3 newWindow = new Window3(path.Split('.')[0] + "1.mp4");
+                    newWindow.Show();
+
+                });
+               
+            }
+           
+            else
             VideoToFrames.videoToFrames.ReadFromVideo(path);
 
         }
@@ -197,8 +214,46 @@ namespace Picture3D
         {
             Process.Start(baseURI + @"/ScreenShots");
         }
+        private void SampleVideo_Click(dynamic sender, RoutedEventArgs e)
+        {
+            sample = true;
+            string selectedAlgorithm = "";
+            if (sender.Name == "SampleVideo")
+            {
+                selectedAlgorithm = "Color Anaglyph";
+            }
+            else
+            {
+                selectedAlgorithm = sender.Header;
+
+            }
+            ConvertedImage.Source = null;
+            string imgLocation = "";
+            Bitmap imagebmp;
+            try
+            {
+                if (MainImage.Source == null)
+                    throw new Exception("Load image first.");
+
+                imagebmp = new Bitmap((string)MainImageTextBox.Text); // location for image
+
+                BackgroundHelperRequest arguments = new BackgroundHelperRequest()
+                {
+                    image = imagebmp,
+                    selectedAlgorythm = selectedAlgorithm,
+                };
+
+                worker.RunWorkerAsync(argument: arguments);
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+                System.Windows.Forms.MessageBox.Show(exception.Message);
+            }
+        }
         private void ApplyToVideo_Click(dynamic sender, RoutedEventArgs e)
         {
+            sample = false;
             string selectedAlgorithm = "";
             if (sender.Name == "ApplyToVideo")
             {
@@ -217,13 +272,6 @@ namespace Picture3D
                 if (MainImage.Source == null)
                     throw new Exception("Load image first.");
 
-                //if (this.CurrentAlgorythm != selectedAlgorithm)
-                //{
-                //    AnaglyphParameters.ResetParameters();
-                //    SetFilterValues();
-                //    CurrentAlgorythm = selectedAlgorithm;
-                //}
-
                 imagebmp = new Bitmap((string)MainImageTextBox.Text); // location for image
 
                 BackgroundHelperRequest arguments = new BackgroundHelperRequest()
@@ -240,5 +288,7 @@ namespace Picture3D
                 System.Windows.Forms.MessageBox.Show(exception.Message);
             }
         }
+
+
     }
 }

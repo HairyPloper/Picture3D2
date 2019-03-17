@@ -145,6 +145,41 @@ namespace Picture3D.AnaglyphApi
             writer.Close();
             reader.Close();
         }
+        public void ReadFromVideoHundred(string path)
+        {
+
+            pathToFile = new Uri(path);
+            reader.Open(pathToFile.LocalPath);
+            pathToWrite = pathToFile.LocalPath.Split('.')[0] + "1.mp4";
+
+            SetWriter(reader, writer);
+            for (int i = 0; i < 100; i++)
+            {
+               
+                try
+                {
+                    using (Bitmap videoFrame = reader.ReadVideoFrame(i))
+                    {
+                        using (Bitmap videoFrameChanged = new AnaglyphAlgorithmInvoker(alghorithmType).Apply(videoFrame))
+                        {
+                            //videoFrameChanged.Save(Application.StartupPath + "\\img.bmp");
+                            if (videoFrameChanged.PixelFormat == System.Drawing.Imaging.PixelFormat.Format24bppRgb || videoFrameChanged.PixelFormat == System.Drawing.Imaging.PixelFormat.Format32bppRgb)
+                                writer.WriteVideoFrame(videoFrameChanged, (uint)i);
+                            videoFrameChanged.Dispose();
+                        }
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.StackTrace);
+                }
+
+
+            }
+            writer.Close();
+            reader.Close();
+        }
         public void SetWriter (VideoFileReader reader, VideoFileWriter writer)
         {
             switch (reader.CodecName.ToUpper())

@@ -1,75 +1,68 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.IO;
-using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Windows.Threading;
-using System.Windows.Controls.Primitives;
-using Picture3D.AnaglyphApi;
-using Color = System.Windows.Media.Color;
-using System.Windows.Interop;
-using Picture3D;
-using System.Diagnostics;
 
-namespace MediaSampleWPF
+namespace Picture3D
 {
-    public partial class Window1 : Window
+    /// <summary>
+    /// Interaction logic for Window3.xaml
+    /// </summary>
+    public partial class Window3 : Window
     {
+        string Path { get; set; }
         DispatcherTimer timer;
-        private int n = 0;
-
-        #region Constructor
-        public Window1()
+        public Window3(string Path)
         {
+            this.Path = Path;
             InitializeComponent();
             IsPlaying(false);
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(200);
             timer.Tick += new EventHandler(timer_Tick);
+            MediaEL.Source = new Uri(Path);
+            btnPlay.IsEnabled = true;
+            InitialPlay();
         }
-        #endregion
-
-        [System.Runtime.InteropServices.DllImport("gdi32.dll")]
-        public static extern bool DeleteObject(IntPtr hObject);
-
-        #region ChangeMediaVolume
-        private void ChangeMediaVolume(object sender, RoutedPropertyChangedEventArgs<double> args)
+        private void InitialPlay()
         {
-            MediaEL.Volume = (double)volumeSlider.Value;
+            IsPlaying(true);
+            if (btnPlay.Content.ToString() == "Play")
+            {
+                MediaEL.Play();
+                btnPlay.Content = "Pause";
+            }
+            else
+            {
+                MediaEL.Pause();
+                btnPlay.Content = "Play";
+            }
         }
-        void InitializePropertyValues()
-        {
-            MediaEL.Volume = (double)volumeSlider.Value;
-        }
-        #endregion
-
-        #region IsPlaying(bool)
         private void IsPlaying(bool bValue)
         {
             btnStop.IsEnabled = bValue;
             btnMoveBackward.IsEnabled = bValue;
             btnMoveForward.IsEnabled = bValue;
             btnPlay.IsEnabled = bValue;
-            btnScreenShot.IsEnabled = bValue;
+           
             seekBar.IsEnabled = bValue;
         }
-        #endregion
-    
         #region Play and Pause
         public void btnPlay_Click(object sender, RoutedEventArgs e)
         {
-           // VideoToFrames.ReadFromVideo();
+            // VideoToFrames.ReadFromVideo();
             IsPlaying(true);
             if (btnPlay.Content.ToString() == "Play")
             {
@@ -119,52 +112,6 @@ namespace MediaSampleWPF
         }
 
         #endregion
-
-        #region Capture Screenshot
-
-        private void btnScreenShot_Click(object sender, RoutedEventArgs e)
-        {
-            
-            MediaEL.Pause();
-            btnPlay.Content = "Play";
-            string sMessageBoxText = "Do you want to use this screenshot?";
-            string sCaption = "Confirm screenshot";
-
-            MessageBoxButton btnMessageBox = MessageBoxButton.YesNo;
-            MessageBoxImage icnMessageBox = MessageBoxImage.Question;
-
-            MessageBoxResult rsltMessageBox = MessageBox.Show(sMessageBoxText, sCaption, btnMessageBox, icnMessageBox);
-
-            switch (rsltMessageBox)
-            {
-                case MessageBoxResult.Yes:
-                    byte[] screenshot = MediaEL.GetScreenShot(1, 90);
-                    string baseURI = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                    string pathString = System.IO.Path.Combine(baseURI, "ScreenShots");
-                    System.IO.Directory.CreateDirectory(pathString);
-                    using (FileStream fileStream = new FileStream(baseURI + @"\ScreenShots\Capture" + n + ".jpg", FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
-                    {
-                        BinaryWriter binaryWriter = new BinaryWriter(fileStream);
-                        binaryWriter.Write(screenshot);
-                        fileStream.Close();
-                    }
-                    
-
-                    this.Visibility = Visibility.Hidden;
-                    this.IsEnabled = false;
-                    MainWindow two = new MainWindow(this,n);
-                    two.Show();
-                    n++;
-                    break;
-
-                case MessageBoxResult.No:
-                    MediaEL.Play();
-                    btnPlay.Content = "Pause";
-                    break;
-            }
-        }
-        #endregion
-
         #region Seek Bar
         private void MediaEL_MediaOpened(object sender, RoutedEventArgs e)
         {
@@ -248,50 +195,15 @@ namespace MediaSampleWPF
             }
         }
         #endregion
-
-    }
-
-    #region Extension Methods
-
-    public static class ScreenShot
-    {
-
-        public static byte[] GetScreenShot(this UIElement source, double scale, int quality)
+        #region ChangeMediaVolume
+        private void ChangeMediaVolume(object sender, RoutedPropertyChangedEventArgs<double> args)
         {
-
-            double actualHeight = source.RenderSize.Height;
-            double actualWidth = source.RenderSize.Width;
-            RenderTargetBitmap renderTarget = new RenderTargetBitmap((int)actualWidth,
-                (int)actualHeight, 96, 96, PixelFormats.Pbgra32);
-            VisualBrush sourceBrush = new VisualBrush(source);
-            DrawingVisual drawingVisual = new DrawingVisual();
-            DrawingContext drawingContext = drawingVisual.RenderOpen();
-
-            using (drawingContext)
-            {
-                drawingContext.PushTransform(new ScaleTransform(scale, scale));
-                drawingContext.DrawRectangle(sourceBrush, null, new Rect(new System.Windows.Point(0, 0),
-                    new System.Windows.Point(actualWidth, actualHeight)));
-            }
-            renderTarget.Render(drawingVisual);
-            JpegBitmapEncoder jpgEncoder = new JpegBitmapEncoder();
-            jpgEncoder.QualityLevel = quality;
-            jpgEncoder.Frames.Add(BitmapFrame.Create(renderTarget));
-
-            Byte[] imageArray;
-
-            using (MemoryStream outputStream = new MemoryStream())
-            {
-                jpgEncoder.Save(outputStream);
-                imageArray = outputStream.ToArray();
-                
-            }
-            return imageArray;
+            MediaEL.Volume = (double)volumeSlider.Value;
         }
+        void InitializePropertyValues()
+        {
+            MediaEL.Volume = (double)volumeSlider.Value;
+        }
+        #endregion
     }
-
-
-    #endregion
-
-
 }

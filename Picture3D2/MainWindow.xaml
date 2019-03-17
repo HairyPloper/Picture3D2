@@ -7,11 +7,19 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="530" Width="1200" MinHeight="450" MinWidth="800">
     <Grid>
+        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+        <ProgressBar HorizontalAlignment="Left"
+                     Height="10"
+                     Margin="10,10,0,0"
+                     VerticalAlignment="Top"
+                     Width="100"
+                     Name="B"
+                     Foreground="Salmon"/>
         <Border BorderThickness="2" BorderBrush="#FF000000"  Grid.Row="2" Grid.Column="0" Margin="10,10,10,10">
             <Image Name="MainImage" Margin="0,0,-2,0" />
         </Border>
@@ -53,7 +61,13 @@
                 
             </DockPanel>
             <DockPanel Margin="10">
-                <Button x:Name="ApplyToVideo" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="Apply To Video" Click="ApplyToVideo_Click" Width="180" Height="30" Margin="5"/>
+
+                <Button x:Name="ApplyToVideo" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="Apply to Video" Click="ApplyToVideo_Click" Width="180" Height="30" Margin="5"/>
+
+            </DockPanel>
+            <DockPanel Margin="10">
+               
+                <Button x:Name="SampleVideo" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="Sample Video" Click="SampleVideo_Click" Width="180" Height="30" Margin="5"/>
 
             </DockPanel>
         </StackPanel>
