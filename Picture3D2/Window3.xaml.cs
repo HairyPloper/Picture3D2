@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace Picture3D
@@ -31,7 +22,7 @@ namespace Picture3D
             IsPlaying(false);
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(200);
-            timer.Tick += new EventHandler(timer_Tick);
+            timer.Tick += timer_Tick;
             MediaEL.Source = new Uri(Path);
             btnPlay.IsEnabled = true;
             InitialPlay();
@@ -53,8 +44,6 @@ namespace Picture3D
         private void IsPlaying(bool bValue)
         {
             btnStop.IsEnabled = bValue;
-            btnMoveBackward.IsEnabled = bValue;
-            btnMoveForward.IsEnabled = bValue;
             btnPlay.IsEnabled = bValue;
            
             seekBar.IsEnabled = bValue;

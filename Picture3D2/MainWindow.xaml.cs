@@ -8,6 +8,9 @@ using Picture3D.AnaglyphApi;
 using MediaSampleWPF;
 using System.Drawing.Imaging;
 using System.Diagnostics;
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Picture3D
@@ -22,6 +25,20 @@ namespace Picture3D
         private Window1 _windowOne;
         private bool sample = false;
         public static MainWindow mainWindow;
+        private int _workerState;
+        public int WorkerState
+        {
+            get { return _workerState; }
+            set
+            {
+                _workerState = value;
+                if (PropertyChanged != null)
+                    PropertyChanged(this, new PropertyChangedEventArgs("WorkerState"));
+            }
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+
+
         public MainWindow(Window1 win, int n)
         {
             this.n = n;
@@ -33,7 +50,7 @@ namespace Picture3D
             worker.WorkerReportsProgress = true;
             CurrentAlgorythm = "";
             mainWindow = this;
-            
+
         }
         public static MainWindow GetMainWindow()
         {
@@ -59,137 +76,71 @@ namespace Picture3D
             bitmap.EndInit();
             MainImageTextBox.Text = fullpath;
             MainImage.Source = bitmap;
-            
-            
+
+
             AnaglyphParameters.ResetParameters();
             SetFilterValues();
             filterPanel.IsEnabled = true;
             ConvertedImage.Source = null;
-            
+
         }
 
 
         private void ColorSlider_ValueChangedRed(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             AnaglyphParameters.RedVolume = slColorR.Value;
+            RegenerateButton_Click(this, e);
         }
         private void ColorSlider_ValueChangedBlue(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             AnaglyphParameters.BlueVolume = slColorB.Value;
+            RegenerateButton_Click(this, e);
         }
         private void ColorSlider_ValueChangedGreen(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             AnaglyphParameters.GreenVolume = slColorG.Value;
+            RegenerateButton_Click(this, e);
         }
 
-        //[System.Runtime.InteropServices.DllImport("gdi32.dll")]
-        //public static extern bool DeleteObject(IntPtr hObject);
-
-        //private BitmapImage Bitmap2BitmapImage(Bitmap bitmap)
-        //{
-        //    IntPtr hBitmap = bitmap.GetHbitmap();
-        //    BitmapImage retval;
-
-        //    try
-        //    {
-        //        retval = (BitmapImage)Imaging.CreateBitmapSourceFromHBitmap(
-        //            hBitmap,
-        //            IntPtr.Zero,
-        //            Int32Rect.Empty,
-        //            BitmapSizeOptions.FromEmptyOptions());
-        //    }
-        //    finally
-        //    {
-        //        DeleteObject(hBitmap);
-        //    }
-
-        //    return retval;
-        //}
-
-        private void ColorAnaglyphMenu_Click(dynamic sender, RoutedEventArgs e)
+        private void SaveBitmapImage(Bitmap image, out string outfilename)
         {
-           
-           
-        }
-
-        private void SaveBitmapImage(Bitmap image, string selectedAlgorithm, out string outfilename)
-        {         
             outfilename = baseURI + @"\ScreenShots\Capture" + n + "-CONVERTED.jpg";
             try
             {
-                image.Save(outfilename,ImageFormat.Jpeg);
+                image.Save(outfilename, ImageFormat.Jpeg);
                 image.Dispose();
-                
+
             }
             catch (Exception e)
             {
                 System.Diagnostics.Debug.WriteLine(e);
             }
-            
+
         }
 
         private void worker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundHelperRequest argmunets = (BackgroundHelperRequest)e.Argument;
-            string imgLocation;
-            //AlgorythmParameters parameters = null;
+
 
             //Call Algorithm
-            Bitmap newImage = new Bitmap(1,1);//new AnaglyphAlgorithmInvoker(argmunets.selectedAlgorythm).Apply(argmunets.image);
+            Bitmap newImage = new Fitler().Calc(argmunets.Image);
 
-            //Save bmp to root of app
-            SaveBitmapImage(newImage, argmunets.selectedAlgorythm, out imgLocation);
-            var path = System.IO.Path.GetDirectoryName(
-                System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
-
-            string fullpath =imgLocation;
-
-            BitmapImage bitmap = new BitmapImage();
-            bitmap.BeginInit();
-            bitmap.UriSource = new Uri(fullpath);
-            bitmap.EndInit();
-            bitmap.Freeze();
             e.Result = new BackgroundHelperResponse
             {
-                image = bitmap,
-                location = fullpath,
+                Image = newImage,
+                Location = "",
             };
-            
-            newImage.Dispose();
+
+            //newImage.Dispose();
         }
         private void worker_RunWorkerCompleted(object sender,
             RunWorkerCompletedEventArgs e)
         {
             var response = (BackgroundHelperResponse)e.Result;
-            ConvertedImage.Source = response.image;
-            ConvertedImageTextBox.Text = response.location;
 
-            System.Windows.Forms.OpenFileDialog ofd =
-                new System.Windows.Forms.OpenFileDialog {Filter = "Video file (*.avi;*.mp4,*.wmv)|*.avi;*.mp4;*.wmv"};
-            if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                Task.Factory.StartNew(() =>
-                    ExpGenMethod(ofd.FileName));
-            }
-
+            ConvertedImage.Source = ToBitmapImage(response.Image);
             SetFilterValues();
-            
-        }
-        public void ExpGenMethod(string path)
-        {   if(sample)
-            {
-                VideoToFrames.videoToFrames.ReadFromVideoHundred(path);
-                Application.Current.Dispatcher.Invoke((Action)delegate {
-                    Window3 newWindow = new Window3(path.Split('.')[0] + "1.mp4");
-                    newWindow.Show();
-
-                });
-               
-            }
-           
-            else
-            VideoToFrames.videoToFrames.ReadFromVideo(path);
-
         }
 
         private void SetFilterValues()
@@ -200,14 +151,14 @@ namespace Picture3D
         }
         public class BackgroundHelperRequest
         {
-            public Bitmap image;
-            public string selectedAlgorythm;
+            public Bitmap Image;
+            public string SelectedAlgorythm;
 
         }
         public class BackgroundHelperResponse
         {
-            public BitmapImage image;
-            public string location;
+            public Bitmap Image;
+            public string Location;
         }
 
         private void OpenFolder_Click(object sender, RoutedEventArgs e)
@@ -217,70 +168,72 @@ namespace Picture3D
         private void SampleVideo_Click(dynamic sender, RoutedEventArgs e)
         {
             sample = true;
-            string selectedAlgorithm = "";
-            if (sender.Name == "SampleVideo")
-            {
-                selectedAlgorithm = "Color Anaglyph";
-            }
-            else
-            {
-                selectedAlgorithm = sender.Header;
-
-            }
-            ConvertedImage.Source = null;
-            string imgLocation = "";
-            Bitmap imagebmp;
             try
             {
-                if (MainImage.Source == null)
-                    throw new Exception("Load image first.");
 
-                imagebmp = new Bitmap((string)MainImageTextBox.Text); // location for image
-
-                BackgroundHelperRequest arguments = new BackgroundHelperRequest()
-                {
-                    image = imagebmp,
-                    selectedAlgorythm = selectedAlgorithm,
-                };
-
-                worker.RunWorkerAsync(argument: arguments);
+                Task.Factory.StartNew(() =>
+                    ExpGenMethod(AnaglyphParameters.VideoPath));
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception);
                 System.Windows.Forms.MessageBox.Show(exception.Message);
             }
+        }
+
+        public void ExpGenMethod(Uri path)
+        {
+            CancellationTokenSource tokenSource = new CancellationTokenSource();
+            var token = tokenSource.Token;
+            Task.Factory.StartNew(() =>
+            {
+                for (int i = 0; i <= 100; i++)
+                {
+                    if (token.IsCancellationRequested)
+                    {
+                        //100%
+                        WorkerState = 100;
+                        token.ThrowIfCancellationRequested();
+                    }
+                    Thread.Sleep(100);
+                    WorkerState = i;
+                }
+            }, token);
+
+            if (sample)
+            {
+                VideoToFrames.videoToFrames.ReadFromVideoHundred(path.LocalPath);
+                Application.Current.Dispatcher.Invoke((Action)delegate
+                {
+                    Window3 newWindow = new Window3(path.LocalPath.Split('.')[0] + "1.mp4");
+                    newWindow.Show();
+
+                });
+            }
+            else
+            {
+                VideoToFrames.videoToFrames.ReadFromVideo(path.LocalPath);
+                Application.Current.Dispatcher.Invoke((Action)delegate
+                {
+                    Window3 newWindow = new Window3(path.LocalPath.Split('.')[0] + "1.mp4");
+                    newWindow.Show();
+
+                });
+            }
+
+            tokenSource.Cancel();
+            //Small delay to show 100% on progress bar
+            Thread.Sleep(100);
         }
         private void ApplyToVideo_Click(dynamic sender, RoutedEventArgs e)
         {
             sample = false;
-            string selectedAlgorithm = "";
-            if (sender.Name == "ApplyToVideo")
-            {
-                selectedAlgorithm = "Color Anaglyph";
-            }
-            else
-            {
-                selectedAlgorithm = sender.Header;
 
-            }
-            ConvertedImage.Source = null;
-            string imgLocation = "";
-            Bitmap imagebmp;
             try
             {
-                if (MainImage.Source == null)
-                    throw new Exception("Load image first.");
 
-                imagebmp = new Bitmap((string)MainImageTextBox.Text); // location for image
-
-                BackgroundHelperRequest arguments = new BackgroundHelperRequest()
-                {
-                    image = imagebmp,
-                    selectedAlgorythm = selectedAlgorithm,
-                };
-
-                worker.RunWorkerAsync(argument: arguments);
+                Task.Factory.StartNew(() =>
+                    ExpGenMethod(AnaglyphParameters.VideoPath));
             }
             catch (Exception exception)
             {
@@ -288,7 +241,43 @@ namespace Picture3D
                 System.Windows.Forms.MessageBox.Show(exception.Message);
             }
         }
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
+        private void RegenerateButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (MainImage.Source == null)
+                throw new Exception("Load image first.");
 
+            var imagebmp = new Bitmap((string)MainImageTextBox.Text); // location for image
+
+            BackgroundHelperRequest arguments = new BackgroundHelperRequest()
+            {
+                Image = imagebmp,
+                SelectedAlgorythm = "",
+            };
+
+            if (!worker.IsBusy)
+                worker.RunWorkerAsync(arguments);
+        }
+        public BitmapImage ToBitmapImage(Bitmap bitmap)
+        {
+            using (var memory = new MemoryStream())
+            {
+                bitmap.Save(memory, ImageFormat.Png);
+                memory.Position = 0;
+
+                var bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.StreamSource = memory;
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapImage.EndInit();
+                bitmapImage.Freeze();
+
+                return bitmapImage;
+            }
+        }
     }
 }

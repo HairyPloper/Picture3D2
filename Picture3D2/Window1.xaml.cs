@@ -1,26 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.IO;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Threading;
 using System.Windows.Controls.Primitives;
-using Picture3D.AnaglyphApi;
-using Color = System.Windows.Media.Color;
-using System.Windows.Interop;
 using Picture3D;
-using System.Diagnostics;
+using Picture3D.AnaglyphApi;
 
 namespace MediaSampleWPF
 {
@@ -58,8 +46,6 @@ namespace MediaSampleWPF
         private void IsPlaying(bool bValue)
         {
             btnStop.IsEnabled = bValue;
-            btnMoveBackward.IsEnabled = bValue;
-            btnMoveForward.IsEnabled = bValue;
             btnPlay.IsEnabled = bValue;
             btnScreenShot.IsEnabled = bValue;
             seekBar.IsEnabled = bValue;
@@ -115,6 +101,8 @@ namespace MediaSampleWPF
             {
                 MediaEL.Source = new Uri(ofd.FileName);
                 btnPlay.IsEnabled = true;
+                AnaglyphParameters.VideoPath = new Uri(ofd.FileName);
+                btnPlay_Click(this, e);
             }
         }
 

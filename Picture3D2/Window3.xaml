@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Picture3D"
         mc:Ignorable="d"
-        Title="Window3" Height="450" Width="800">
+        Title="Sample Video" Height="450" Width="800">
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="5*" />
@@ -28,10 +28,6 @@
                     Width="50" Height="25" Margin="2"/>
                 <Button x:Name="btnStop" Content="Stop" Click="btnStop_Click"  
                     Width="50" Height="25" Margin="2"/>
-                <Button x:Name="btnMoveBackward" Content="Back" Click="btnMoveBackward_Click"  
-                    Width="50" Height="25" Margin="2" />
-                <Button x:Name="btnMoveForward" Content="Forward" Click="btnMoveForward_Click"  
-                    Width="50" Height="25" Margin="2" />
 
                 <Slider Name="volumeSlider" VerticalAlignment="Center" HorizontalAlignment="Right" ValueChanged="ChangeMediaVolume" 
        Minimum="0" Maximum="1" Value="0.5" Width="90" Margin="2" />

@@ -13,19 +13,13 @@
             <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <ProgressBar HorizontalAlignment="Left"
-                     Height="10"
-                     Margin="10,10,0,0"
-                     VerticalAlignment="Top"
-                     Width="100"
-                     Name="B"
-                     Foreground="Salmon"/>
         <Border BorderThickness="2" BorderBrush="#FF000000"  Grid.Row="2" Grid.Column="0" Margin="10,10,10,10">
             <Image Name="MainImage" Margin="0,0,-2,0" />
         </Border>
         <Border BorderThickness="2" BorderBrush="#FF000000"  Grid.Row="2" Grid.Column="1" Margin="10,10,10,10">
             <Image Name="ConvertedImage" />
         </Border>
+        <ProgressBar x:Name="ProgressBar" Grid.Row="0" Grid.Column="1" Width="200" Height="15" Minimum="0" Maximum="100" Value="{Binding WorkerState}" Visibility="Hidden"></ProgressBar>
         <StackPanel x:Name="filterPanel" Grid.Row="2" Grid.Column="2" IsEnabled="False" Margin="10" VerticalAlignment="Center">
             <DockPanel HorizontalAlignment="Center">
                 <Label>
@@ -52,7 +46,7 @@
             </DockPanel>
             <Rectangle Height="30"/>
             <DockPanel Margin="10,0">
-                <Button x:Name="RegenerateButton" HorizontalAlignment="Center" VerticalAlignment="Top" Content="Refresh" Click="ColorAnaglyphMenu_Click" Width="85" Height="30" Margin="5"/>
+                <Button x:Name="RegenerateButton" HorizontalAlignment="Center" VerticalAlignment="Top" Content="Refresh"  Width="85" Height="30" Margin="5" Click="RegenerateButton_Click"/>
                 <Button x:Name="CancelButton" Content="Cancel" Click="Cancel_Click" HorizontalAlignment="Center" VerticalAlignment="Top" Width="85" Height="30" Margin="5" />
 
             </DockPanel>
