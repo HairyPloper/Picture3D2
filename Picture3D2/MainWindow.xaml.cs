@@ -18,13 +18,14 @@ namespace Picture3D
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private int n;
         private string baseURI = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         private Window1 _windowOne;
         private bool sample = false;
         public static MainWindow mainWindow;
+
         private int _workerState;
         public int WorkerState
         {
@@ -36,7 +37,9 @@ namespace Picture3D
                     PropertyChanged(this, new PropertyChangedEventArgs("WorkerState"));
             }
         }
+
         public event PropertyChangedEventHandler PropertyChanged;
+        public CancellationTokenSource tokenSource = new CancellationTokenSource();
 
 
         public MainWindow(Window1 win, int n)
@@ -48,15 +51,34 @@ namespace Picture3D
             worker.DoWork += worker_DoWork;
             worker.RunWorkerCompleted += worker_RunWorkerCompleted;
             worker.WorkerReportsProgress = true;
-            CurrentAlgorythm = "";
             mainWindow = this;
 
+            progressWorker.DoWork += progressWorker_DoWork;
+            progressWorker.WorkerReportsProgress = true;
+            progressWorker.RunWorkerCompleted += progressWorker_RunWorkerCompleted;
+            progressWorker.ProgressChanged += ProgressWorker_ProgressChanged;
+            progressWorker.WorkerSupportsCancellation = true;
+            //progressWorker.RunWorkerAsync();
         }
+
+        private void ProgressWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+
+            ProgressBar.Value = e.ProgressPercentage;
+        }
+
+        public void ChangeProgressBar(int i)
+        {
+            ProgressBar.Value = i;
+        }
+
         public static MainWindow GetMainWindow()
         {
             return mainWindow;
         }
         private readonly BackgroundWorker worker = new BackgroundWorker();
+        private readonly BackgroundWorker progressWorker = new BackgroundWorker();
+
         private string CurrentAlgorythm { get; set; }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
@@ -118,6 +140,42 @@ namespace Picture3D
 
         }
 
+        private void progressWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            var worker1 = sender as BackgroundWorker;
+            worker1.ReportProgress(0);
+            for (int i = 0; i <= 98; i++)
+            {
+                if (worker1.CancellationPending)
+                {
+                    worker1.ReportProgress(100);
+                    Thread.Sleep(100);
+                    e.Cancel = true;
+                    return;
+                }
+                Thread.Sleep(100+i*30);
+                worker1.ReportProgress(i);
+            }
+            //TO LONG
+            while (true)
+            {
+                if (worker1.CancellationPending)
+                {
+                    worker1.ReportProgress(100);
+                    Thread.Sleep(100);
+                    e.Cancel = true;
+                    break;
+                }
+            }
+        }
+
+        private void progressWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            //MessageBox.Show("Process finished!");
+            ProgressBar.Visibility = Visibility.Hidden;
+            ProgressBar.Value = 0;
+        }
+
         private void worker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundHelperRequest argmunets = (BackgroundHelperRequest)e.Argument;
@@ -167,12 +225,26 @@ namespace Picture3D
         }
         private void SampleVideo_Click(dynamic sender, RoutedEventArgs e)
         {
+            progressWorker.RunWorkerAsync();
+            ProgressBar.Visibility = Visibility.Visible;
+
+            Task output = null;
             sample = true;
             try
             {
+                output = Task.Factory.StartNew(() =>
+                {
+                    try
+                    {
+                        ExpGenMethod(AnaglyphParameters.VideoPath);
+                    }
+                    catch
+                    {
 
-                Task.Factory.StartNew(() =>
-                    ExpGenMethod(AnaglyphParameters.VideoPath));
+                    }
+                    progressWorker.CancelAsync();
+
+                });
             }
             catch (Exception exception)
             {
@@ -183,37 +255,10 @@ namespace Picture3D
 
         public void ExpGenMethod(Uri path)
         {
-            CancellationTokenSource tokenSource = new CancellationTokenSource();
-            var token = tokenSource.Token;
-            Task.Factory.StartNew(() =>
-            {
-                for (int i = 0; i <= 100; i++)
-                {
-                    if (token.IsCancellationRequested)
-                    {
-                        //100%
-                        WorkerState = 100;
-                        token.ThrowIfCancellationRequested();
-                    }
-                    Thread.Sleep(100);
-                    WorkerState = i;
-                }
-            }, token);
-
             if (sample)
             {
                 VideoToFrames.videoToFrames.ReadFromVideoHundred(path.LocalPath);
-                Application.Current.Dispatcher.Invoke((Action)delegate
-                {
-                    Window3 newWindow = new Window3(path.LocalPath.Split('.')[0] +"-converted"+ ".mp4");
-                    newWindow.Show();
-
-                });
-            }
-            else
-            {
-                VideoToFrames.videoToFrames.ReadFromVideo(path.LocalPath);
-               
+                //VideoToFrames.OnProcessDone += (sender, e) => VideoToFramesOnOnProcessDone(sender, e);
                 Application.Current.Dispatcher.Invoke((Action)delegate
                 {
                     Window3 newWindow = new Window3(path.LocalPath.Split('.')[0] + "-converted" + ".mp4");
@@ -221,20 +266,45 @@ namespace Picture3D
 
                 });
             }
+            else
+            {
+                VideoToFrames.videoToFrames.ReadFromVideo(path.LocalPath);
 
-            tokenSource.Cancel();
-            //Small delay to show 100% on progress bar
-            Thread.Sleep(100);
+                Application.Current.Dispatcher.Invoke((Action)delegate
+                {
+                    Window3 newWindow = new Window3(path.LocalPath.Split('.')[0] + "-converted" + ".mp4");
+                    newWindow.Show();
+
+                });
+            }
+            notifyDone();
         }
+
+        private void VideoToFramesOnOnProcessDone(object sender, EventArgs e)
+        {
+            var ev = (NotifyEventArgs)e;
+            ProgressBar.Value = ev.Progress;
+        }
+
         private void ApplyToVideo_Click(dynamic sender, RoutedEventArgs e)
         {
+            progressWorker.RunWorkerAsync();
+            ProgressBar.Visibility = Visibility.Visible;
             sample = false;
-
             try
             {
-
                 Task.Factory.StartNew(() =>
-                    ExpGenMethod(AnaglyphParameters.VideoPath));
+                {
+                    try
+                    {
+                        ExpGenMethod(AnaglyphParameters.VideoPath);
+                    }
+                    catch (Exception exception)
+                    {
+
+                    }
+                    progressWorker.CancelAsync();
+                });
             }
             catch (Exception exception)
             {
@@ -242,6 +312,12 @@ namespace Picture3D
                 System.Windows.Forms.MessageBox.Show(exception.Message);
             }
         }
+
+        public void notifyDone()
+        {
+            progressWorker.CancelAsync();
+        }
+
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

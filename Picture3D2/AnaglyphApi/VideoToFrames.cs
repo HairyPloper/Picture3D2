@@ -23,6 +23,11 @@ namespace Picture3D.AnaglyphApi
         VideoFileWriter writer;
         FilterInfoCollection CaptureDdevice;
         private WaveFileAudioSource audioSoruce;
+
+        public delegate void OnProcessDoneHandler(object sender, EventArgs e);
+
+        public static  event OnProcessDoneHandler OnProcessDone;
+
        
         Uri pathToFile;
 
@@ -104,7 +109,6 @@ namespace Picture3D.AnaglyphApi
                 {
                     Console.WriteLine(e.StackTrace);
                 }
-
 
             }
             reader.Close();
@@ -296,5 +300,15 @@ namespace Picture3D.AnaglyphApi
 
         }
 
+        protected virtual void OnOnProcessDone(int segment, int progresss)
+        {
+            OnProcessDone?.Invoke(this, new NotifyEventArgs{Progress = progresss,Segment = segment});
+        }
+    }
+
+    public class NotifyEventArgs : EventArgs
+    {
+        public int Progress;
+        public int Segment;
     }
 }

@@ -19,7 +19,6 @@
         <Border BorderThickness="2" BorderBrush="#FF000000"  Grid.Row="2" Grid.Column="1" Margin="10,10,10,10">
             <Image Name="ConvertedImage" />
         </Border>
-        <ProgressBar x:Name="ProgressBar" Grid.Row="0" Grid.Column="1" Width="200" Height="15" Minimum="0" Maximum="100" Value="{Binding WorkerState}" Visibility="Hidden"></ProgressBar>
         <StackPanel x:Name="filterPanel" Grid.Row="2" Grid.Column="2" IsEnabled="False" Margin="10" VerticalAlignment="Center">
             <DockPanel HorizontalAlignment="Center">
                 <Label>
@@ -63,6 +62,9 @@
                
                 <Button x:Name="SampleVideo" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="Sample Video" Click="SampleVideo_Click" Width="180" Height="30" Margin="5"/>
 
+            </DockPanel>
+            <DockPanel Margin="10">
+                <ProgressBar x:Name="ProgressBar"  Width="200" Height="15" Minimum="0" Maximum="100" Value="{Binding WorkerState}" Visibility="Hidden"></ProgressBar>
             </DockPanel>
         </StackPanel>
         <TextBox x:Name="MainImageTextBox" HorizontalAlignment="Left" Height="23" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Width="457" Margin="10,22,0,5" IsReadOnly="True" Visibility="Hidden"/>
