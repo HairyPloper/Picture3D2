@@ -205,7 +205,7 @@ namespace Picture3D
                 VideoToFrames.videoToFrames.ReadFromVideoHundred(path.LocalPath);
                 Application.Current.Dispatcher.Invoke((Action)delegate
                 {
-                    Window3 newWindow = new Window3(path.LocalPath.Split('.')[0] + "1.mp4");
+                    Window3 newWindow = new Window3(path.LocalPath.Split('.')[0] +"-converted"+ ".mp4");
                     newWindow.Show();
 
                 });
@@ -213,9 +213,10 @@ namespace Picture3D
             else
             {
                 VideoToFrames.videoToFrames.ReadFromVideo(path.LocalPath);
+               
                 Application.Current.Dispatcher.Invoke((Action)delegate
                 {
-                    Window3 newWindow = new Window3(path.LocalPath.Split('.')[0] + "1.mp4");
+                    Window3 newWindow = new Window3(path.LocalPath.Split('.')[0] + "-converted" + ".mp4");
                     newWindow.Show();
 
                 });
@@ -278,6 +279,12 @@ namespace Picture3D
 
                 return bitmapImage;
             }
+        }
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+
+            Application.Current.Shutdown();
         }
     }
 }

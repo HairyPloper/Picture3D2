@@ -7,7 +7,8 @@ namespace Picture3D.AnaglyphApi
         public static double RedVolume { get; set; }
         public static double BlueVolume { get; set; }
         public static double GreenVolume { get; set; }
-
+        public static string PathToRead { get; set; }
+        public static string PathToWrite { get; set; }
         public static Uri VideoPath { get; set; }
 
         public static void ResetParameters()
