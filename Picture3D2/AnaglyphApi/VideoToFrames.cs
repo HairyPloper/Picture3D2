@@ -211,7 +211,7 @@ namespace Picture3D.AnaglyphApi
                 ffmpegProcess.StartInfo.RedirectStandardOutput = true;
                 ffmpegProcess.StartInfo.RedirectStandardError = true;
                 ffmpegProcess.StartInfo.CreateNoWindow = true;
-            ffmpegProcess.StartInfo.FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ffmpeg\\ffmpeg.exe");//"C:\\Users\\Filip\\Source\\Repos\\Picture3D2\\Picture3D2\\ffmpeg-20190323-5fceac1-win32-shared\\bin\\ffmpeg.exe";//@"\ffmpeg-20190323-5fceac1-win32-shared\bin\ffmpeg.exe"; 
+            ffmpegProcess.StartInfo.FileName = Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.FullName, "ffmpeg\\ffmpeg.exe");//"C:\\Users\\Filip\\Source\\Repos\\Picture3D2\\Picture3D2\\ffmpeg-20190323-5fceac1-win32-shared\\bin\\ffmpeg.exe";//@"\ffmpeg-20190323-5fceac1-win32-shared\bin\ffmpeg.exe"; 
                                                                                                                                                                 // ffmpegProcess.StartInfo.Arguments = " -i " + inputFile + " -vn -f mp3 -ab 320k output " + outputFile;
             ffmpegProcess.StartInfo.Arguments = "-i " + inputFile + " -vn -acodec copy " + outputFile; //ffmpeg -i input-video.avi -vn -acodec copy output-audio.aac
             ffmpegProcess.Start();
@@ -243,7 +243,7 @@ namespace Picture3D.AnaglyphApi
             ffmpegProcess.StartInfo.RedirectStandardOutput = true;
             ffmpegProcess.StartInfo.RedirectStandardError = true;
             ffmpegProcess.StartInfo.CreateNoWindow = true;
-            ffmpegProcess.StartInfo.FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ffmpeg\\ffmpeg.exe");//"C:\\Users\\Filip\\Source\\Repos\\Picture3D2\\Picture3D2\\ffmpeg-20190323-5fceac1-win32-shared\\bin\\ffmpeg.exe";//@"\ffmpeg-20190323-5fceac1-win32-shared\bin\ffmpeg.exe"; 
+            ffmpegProcess.StartInfo.FileName = Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.FullName, "ffmpeg\\ffmpeg.exe");//"C:\\Users\\Filip\\Source\\Repos\\Picture3D2\\Picture3D2\\ffmpeg-20190323-5fceac1-win32-shared\\bin\\ffmpeg.exe";//@"\ffmpeg-20190323-5fceac1-win32-shared\bin\ffmpeg.exe"; 
             //ffmpeg -i video.avi -i audio.mp3 -codec copy -shortest output.avi                                                                             // ffmpegProcess.StartInfo.Arguments = " -i " + inputFile + " -vn -f mp3 -ab 320k output " + outputFile;
             ffmpegProcess.StartInfo.Arguments = "-i " + inputFile + " -i " +audioFile+ " -codec copy -shortest " + outputFile; 
             ffmpegProcess.Start();
@@ -276,7 +276,7 @@ namespace Picture3D.AnaglyphApi
             ffmpegProcess.StartInfo.RedirectStandardOutput = true;
             ffmpegProcess.StartInfo.RedirectStandardError = true;
             ffmpegProcess.StartInfo.CreateNoWindow = true;
-            ffmpegProcess.StartInfo.FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ffmpeg\\ffmpeg.exe");//"C:\\Users\\Filip\\Source\\Repos\\Picture3D2\\Picture3D2\\ffmpeg-20190323-5fceac1-win32-shared\\bin\\ffmpeg.exe";//@"\ffmpeg-20190323-5fceac1-win32-shared\bin\ffmpeg.exe"; 
+            ffmpegProcess.StartInfo.FileName = Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.FullName, "ffmpeg\\ffmpeg.exe");//"C:\\Users\\Filip\\Source\\Repos\\Picture3D2\\Picture3D2\\ffmpeg-20190323-5fceac1-win32-shared\\bin\\ffmpeg.exe";//@"\ffmpeg-20190323-5fceac1-win32-shared\bin\ffmpeg.exe"; 
             //ffmpeg -i in.mp4 -f ffmetadata in.txt                                                                       // ffmpegProcess.StartInfo.Arguments = " -i " + inputFile + " -vn -f mp3 -ab 320k output " + outputFile;
             ffmpegProcess.StartInfo.Arguments = "-i " + inputFile+ " -f ffmetadata " + outputFile;
             ffmpegProcess.Start();
