@@ -1,18 +1,13 @@
 ﻿
 using System;
 using System.Drawing;
-using Accord.Audio;
 using Accord.Video.FFMPEG;
-using AForge;
-using AForge.Video;
 using AForge.Video.DirectShow;
 using Accord.DirectSound;
-using System.Linq;
 using AnaglyphGenerator.Models;
 using System.IO;
 using System.Diagnostics;
-using System.Threading.Tasks;
-using System.Threading;
+
 
 namespace Picture3D.AnaglyphApi
 {
