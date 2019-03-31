@@ -141,7 +141,11 @@ namespace MediaSampleWPF
                     this.Visibility = Visibility.Hidden;
                     this.IsEnabled = false;
                     MainWindow two = new MainWindow(this,n);
-                    two.Show();
+                    if(two.ShowDialog()== false)
+                    {
+                        this.Visibility = Visibility.Visible;
+                        this.IsEnabled = true;
+                    }
                     n++;
                     break;
 
