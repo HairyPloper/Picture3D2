@@ -225,6 +225,11 @@ namespace Picture3D
         }
         private void SampleVideo_Click(dynamic sender, RoutedEventArgs e)
         {
+            string PathToSave = SaveTo();
+            if (String.IsNullOrEmpty(PathToSave))
+            {
+                return;
+            }
             progressWorker.RunWorkerAsync();
             ProgressBar.Visibility = Visibility.Visible;
 
@@ -236,7 +241,7 @@ namespace Picture3D
                 {
                     try
                     {
-                        ExpGenMethod(AnaglyphParameters.VideoPath);
+                        ExpGenMethod(new  Uri(PathToSave));
                     }
                     catch
                     {
@@ -261,7 +266,7 @@ namespace Picture3D
                 //VideoToFrames.OnProcessDone += (sender, e) => VideoToFramesOnOnProcessDone(sender, e);
                 Application.Current.Dispatcher.Invoke((Action)delegate
                 {
-                    Window3 newWindow = new Window3(path.LocalPath.Split('.')[0] + "-converted" + ".mp4");
+                    Window3 newWindow = new Window3(path.LocalPath);
                     newWindow.Show();
 
                 });
@@ -272,7 +277,7 @@ namespace Picture3D
 
                 Application.Current.Dispatcher.Invoke((Action)delegate
                 {
-                    Window3 newWindow = new Window3(path.LocalPath.Split('.')[0] + "-converted" + ".mp4");
+                    Window3 newWindow = new Window3(path.LocalPath);
                     newWindow.Show();
 
                 });
@@ -288,6 +293,12 @@ namespace Picture3D
 
         private void ApplyToVideo_Click(dynamic sender, RoutedEventArgs e)
         {
+          string PathToSave= SaveTo();
+            if(String.IsNullOrEmpty(PathToSave))
+            {
+                return;
+            }
+        
             progressWorker.RunWorkerAsync();
             ProgressBar.Visibility = Visibility.Visible;
             sample = false;
@@ -358,9 +369,36 @@ namespace Picture3D
         }
         protected override void OnClosed(EventArgs e)
         {
+            
             base.OnClosed(e);
+            //Application.Current.Shutdown();
+        }
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+        }
 
-            Application.Current.Shutdown();
+        private void Refresh(object sender, RoutedEventArgs e)
+        {
+            AnaglyphParameters.RedVolume = 0;
+            AnaglyphParameters.BlueVolume = 0;
+            AnaglyphParameters.GreenVolume = 0;
+            SetFilterValues();
+        }
+        private string SaveTo()
+        {
+            using (var fbd = new System.Windows.Forms.SaveFileDialog())
+            {
+                fbd.Filter = "Video file (*.mp4)|*.mp4;";
+                System.Windows.Forms.DialogResult result = fbd.ShowDialog();
+
+                if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.FileName))
+                {
+                    return fbd.FileName;
+                }
+             
+            }
+            return "";
         }
     }
 }

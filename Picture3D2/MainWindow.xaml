@@ -45,14 +45,11 @@
             </DockPanel>
             <Rectangle Height="30"/>
             <DockPanel Margin="10,0">
-                <Button x:Name="RegenerateButton" HorizontalAlignment="Center" VerticalAlignment="Top" Content="Refresh"  Width="85" Height="30" Margin="5" Click="RegenerateButton_Click"/>
+                <Button x:Name="RegenerateButton" HorizontalAlignment="Center" VerticalAlignment="Top" Content="Reset"  Width="85" Height="30" Margin="5" Click="Refresh"/>
                 <Button x:Name="CancelButton" Content="Cancel" Click="Cancel_Click" HorizontalAlignment="Center" VerticalAlignment="Top" Width="85" Height="30" Margin="5" />
 
             </DockPanel>
-            <DockPanel Margin="10">
-                    <Button x:Name="OpenFolderButton" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="Open screenshots folder" Click="OpenFolder_Click" Width="180" Height="30" Margin="5"/>
-                
-            </DockPanel>
+
             <DockPanel Margin="10">
 
                 <Button x:Name="ApplyToVideo" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="Apply to Video" Click="ApplyToVideo_Click" Width="180" Height="30" Margin="5"/>

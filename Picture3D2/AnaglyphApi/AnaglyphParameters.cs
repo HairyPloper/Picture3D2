@@ -10,7 +10,7 @@ namespace Picture3D.AnaglyphApi
         public static string PathToRead { get; set; }
         public static string PathToWrite { get; set; }
         public static Uri VideoPath { get; set; }
-
+        public static long NumberOfIterations { get; set; } = 0;
         public static void ResetParameters()
         {
             RedVolume = 0;
