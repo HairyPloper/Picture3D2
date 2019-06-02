@@ -13,7 +13,7 @@ namespace Picture3D.AnaglyphApi
 {
     class VideoToFrames
     {
-        public static VideoToFrames videoToFrames { get; } = new VideoToFrames();
+        private static VideoToFrames videoToFrames { get; set; }
         VideoFileReader reader;
         VideoFileWriter writer;
         FilterInfoCollection CaptureDdevice;
@@ -32,10 +32,16 @@ namespace Picture3D.AnaglyphApi
 
             reader = new VideoFileReader();
             writer = new VideoFileWriter();
-
+           
         
         }
+        public static VideoToFrames GetInstance()
+        {
+            if (videoToFrames == null)
+                videoToFrames = new VideoToFrames();
+            return videoToFrames;
 
+        }
          public void ReadFromVideo(string path)
         {
             pathToFile = new Uri(AnaglyphParameters.VideoPath.LocalPath);
@@ -75,15 +81,20 @@ namespace Picture3D.AnaglyphApi
             VideoToFrames.AddAudioToVideo(path);
         }
 
-        public void ReadFromVideoHundred(string path)
+        public void ReadFromVideoSample(string path, double curentTime, String numberOfFrames)
         {
-          
+            int number = 0;
+            if (numberOfFrames != "")
+               number = Convert.ToInt32(numberOfFrames);
             pathToFile = new Uri(AnaglyphParameters.VideoPath.LocalPath);
+            reader.Open(pathToFile.LocalPath);
+            int startingFrame = Convert.ToInt32(curentTime * reader.FrameRate.Value);
+            int endingFrame = Convert.ToInt32(startingFrame + number);
             AnaglyphParameters.PathToRead = pathToFile.LocalPath;
             AnaglyphParameters.PathToWrite = pathToFile.LocalPath.Split('.')[0] + "1.mp4";
             reader.Open(pathToFile.LocalPath);
             SetWriter(reader, writer);
-            for (int i = 0; i < 100; i++)
+            for (int i = startingFrame; i < endingFrame; i++)
             {
 
                 try

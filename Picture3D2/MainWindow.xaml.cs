@@ -12,6 +12,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace Picture3D
 {
@@ -24,8 +25,9 @@ namespace Picture3D
         private string baseURI = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         private Window1 _windowOne;
         private bool sample = false;
+        private double curentTime = 0;
         public static MainWindow mainWindow;
-
+        private string numOfFramesValue = "";
         private int _workerState;
         public int WorkerState
         {
@@ -42,9 +44,10 @@ namespace Picture3D
         public CancellationTokenSource tokenSource = new CancellationTokenSource();
 
 
-        public MainWindow(Window1 win, int n)
+        public MainWindow(Window1 win, int n,double  curentTime)
         {
             this.n = n;
+            this.curentTime = curentTime;
             _windowOne = win;
             InitializeComponent();
             LoadImage();
@@ -98,12 +101,13 @@ namespace Picture3D
             bitmap.EndInit();
             MainImageTextBox.Text = fullpath;
             MainImage.Source = bitmap;
+            ConvertedImage.Source = bitmap;
 
 
             AnaglyphParameters.ResetParameters();
             SetFilterValues();
             filterPanel.IsEnabled = true;
-            ConvertedImage.Source = null;
+            //ConvertedImage.Source = null;
 
         }
 
@@ -153,7 +157,7 @@ namespace Picture3D
                     e.Cancel = true;
                     return;
                 }
-                Thread.Sleep(100+i*30);
+                Thread.Sleep(100 + i * 30);
                 worker1.ReportProgress(i);
             }
             //TO LONG
@@ -232,7 +236,7 @@ namespace Picture3D
             }
             progressWorker.RunWorkerAsync();
             ProgressBar.Visibility = Visibility.Visible;
-
+             numOfFramesValue = numOfFrames.Text;
             Task output = null;
             sample = true;
             try
@@ -241,7 +245,7 @@ namespace Picture3D
                 {
                     try
                     {
-                        ExpGenMethod(new  Uri(PathToSave));
+                        ExpGenMethod(new Uri(PathToSave));
                     }
                     catch
                     {
@@ -262,7 +266,8 @@ namespace Picture3D
         {
             if (sample)
             {
-                VideoToFrames.videoToFrames.ReadFromVideoHundred(path.LocalPath);
+                
+                VideoToFrames.GetInstance().ReadFromVideoSample(path.LocalPath,curentTime, numOfFramesValue);
                 //VideoToFrames.OnProcessDone += (sender, e) => VideoToFramesOnOnProcessDone(sender, e);
                 Application.Current.Dispatcher.Invoke((Action)delegate
                 {
@@ -273,7 +278,7 @@ namespace Picture3D
             }
             else
             {
-                VideoToFrames.videoToFrames.ReadFromVideo(path.LocalPath);
+                VideoToFrames.GetInstance().ReadFromVideo(path.LocalPath);
 
                 Application.Current.Dispatcher.Invoke((Action)delegate
                 {
@@ -293,13 +298,13 @@ namespace Picture3D
 
         private void ApplyToVideo_Click(dynamic sender, RoutedEventArgs e)
         {
-          string PathToSave= SaveTo();
-            if(String.IsNullOrEmpty(PathToSave))
+            string PathToSave = SaveTo();
+            if (String.IsNullOrEmpty(PathToSave))
             {
                 return;
             }
-        
-            progressWorker.RunWorkerAsync();
+
+           progressWorker.RunWorkerAsync();
             ProgressBar.Visibility = Visibility.Visible;
             sample = false;
             try
@@ -369,7 +374,7 @@ namespace Picture3D
         }
         protected override void OnClosed(EventArgs e)
         {
-            
+
             base.OnClosed(e);
             //Application.Current.Shutdown();
         }
@@ -396,9 +401,60 @@ namespace Picture3D
                 {
                     return fbd.FileName;
                 }
-             
+
             }
             return "";
+        }
+        private void SlColorR_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+            if (e.Delta > 0)
+                slColorR.Value += 2.5;
+            else
+                slColorR.Value -= 2.5;
+        }
+
+        private void SlColorG_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+            if (e.Delta > 0)
+                slColorG.Value += 2.5;
+            else
+                slColorG.Value -= 2.5;
+        }
+
+        private void SlColorB_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+            if (e.Delta > 0)
+                slColorB.Value += 2.5;
+            else
+                slColorB.Value -= 2.5;
+        }
+        private void CheckBoxChanged(object sender, RoutedEventArgs e)
+        {
+            var check = (System.Windows.Controls.CheckBox)e.Source;
+            if (check.IsChecked.Value)
+            {
+                BorderMainImage.Visibility = Visibility.Hidden;
+                BorderConvertedImage.SetValue(Grid.ColumnProperty, 0);
+                BorderConvertedImage.SetValue(Grid.ColumnSpanProperty, 2);
+            }
+            else
+            {
+                BorderMainImage.Visibility = Visibility.Visible;
+                BorderConvertedImage.SetValue(Grid.ColumnProperty, 1);
+                BorderConvertedImage.SetValue(Grid.ColumnSpanProperty, 1);
+            }
+        }
+
+        private void AudioCheckBoxChanged(object sender, RoutedEventArgs e)
+        {
+            var check = (System.Windows.Controls.CheckBox)e.Source;
+            if (check.IsChecked.Value)
+            {
+            }
+            else
+            {
+            
+            }
         }
     }
 }

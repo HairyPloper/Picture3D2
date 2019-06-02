@@ -5,6 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Picture3D"
         mc:Ignorable="d"
+        MinHeight="800"
+        MinWidth="450"
         Title="Sample Video" Height="450" Width="800">
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
@@ -30,7 +32,7 @@
                     Width="50" Height="25" Margin="2"/>
 
                 <Slider Name="volumeSlider" VerticalAlignment="Center" HorizontalAlignment="Right" ValueChanged="ChangeMediaVolume" 
-       Minimum="0" Maximum="1" Value="0.5" Width="90" Margin="2" />
+       Minimum="0" Maximum="1" Value="0.5" Width="90" Margin="500,2,2,2" MouseWheel="VolumeSlider_MouseWheel" />
 
             </StackPanel>
 

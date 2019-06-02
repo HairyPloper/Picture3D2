@@ -9,6 +9,7 @@ using System.Windows.Threading;
 using System.Windows.Controls.Primitives;
 using Picture3D;
 using Picture3D.AnaglyphApi;
+using System.Threading;
 
 namespace MediaSampleWPF
 {
@@ -74,6 +75,9 @@ namespace MediaSampleWPF
         private void btnStop_Click(object sender, RoutedEventArgs e)
         {
             MediaEL.Stop();
+            MediaEL.Play();
+            Thread.Sleep(50);
+            MediaEL.Pause();
             btnPlay.Content = "Play";
             IsPlaying(false);
             btnPlay.IsEnabled = true;
@@ -136,11 +140,10 @@ namespace MediaSampleWPF
                         binaryWriter.Write(screenshot);
                         fileStream.Close();
                     }
-                    
-
+                   
                     this.Visibility = Visibility.Hidden;
                     this.IsEnabled = false;
-                    MainWindow two = new MainWindow(this,n);
+                    MainWindow two = new MainWindow(this,n,seekBar.Value);
                     if(two.ShowDialog()== false)
                     {
                         this.Visibility = Visibility.Visible;
@@ -241,6 +244,13 @@ namespace MediaSampleWPF
         }
         #endregion
 
+        private void VolumeSlider_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (e.Delta > 0)
+                volumeSlider.Value += 0.05;
+            else
+                volumeSlider.Value -= 0.05;
+        }
     }
 
     #region Extension Methods

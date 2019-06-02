@@ -5,18 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Picture3D"
         mc:Ignorable="d"
-        Title="MainWindow" Height="530" Width="1200" MinHeight="450" MinWidth="800">
+        Title="MainWindow" Height="530" Width="1200" MinHeight="530" MinWidth="1200">
     <Grid>
-        
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <Border BorderThickness="2" BorderBrush="#FF000000"  Grid.Row="2" Grid.Column="0" Margin="10,10,10,10">
+        <Border x:Name="BorderMainImage" BorderThickness="2" BorderBrush="#FF000000"  Grid.Row="2" Grid.Column="0" Margin="10,10,10,10" IsEnabled="False">
             <Image Name="MainImage" Margin="0,0,-2,0" />
         </Border>
-        <Border BorderThickness="2" BorderBrush="#FF000000"  Grid.Row="2" Grid.Column="1" Margin="10,10,10,10">
+        <Border x:Name="BorderConvertedImage" BorderThickness="2" BorderBrush="#FF000000"  Grid.Row="2" Grid.Column="1" Margin="10,10,10,10">
             <Image Name="ConvertedImage" />
         </Border>
         <StackPanel x:Name="filterPanel" Grid.Row="2" Grid.Column="2" IsEnabled="False" Margin="10" VerticalAlignment="Center">
@@ -29,40 +29,50 @@
             <DockPanel VerticalAlignment="Center" Margin="10">
                 <Label DockPanel.Dock="Left" FontWeight="Bold" VerticalAlignment="Bottom">R:</Label>
                 <TextBox Text="{Binding ElementName=slColorR, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right"  TextAlignment="Center" VerticalContentAlignment="Center" Width="40" />
-                <Slider Maximum="255" Minimum="0" TickPlacement="TopLeft"  Name="slColorR" ValueChanged="ColorSlider_ValueChangedRed" Margin="3" TickFrequency="1" IsSnapToTickEnabled="True" />
+                <Slider Maximum="255" Minimum="0" TickPlacement="TopLeft"  Name="slColorR" ValueChanged="ColorSlider_ValueChangedRed" Margin="3" TickFrequency="1" IsSnapToTickEnabled="True" MouseWheel="SlColorR_MouseWheel" />
             </DockPanel>
             <Rectangle Height="10"/>
             <DockPanel VerticalAlignment="Center" Margin="10">
                 <Label DockPanel.Dock="Left" VerticalAlignment="Bottom" FontWeight="Bold">G:</Label>
                 <TextBox Text="{Binding ElementName=slColorG, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Center" VerticalContentAlignment="Center" Width="40" />
-                <Slider Maximum="255" Minimum="0" TickPlacement="TopLeft" Name="slColorG" ValueChanged="ColorSlider_ValueChangedGreen" Margin="3" TickFrequency="1" IsSnapToTickEnabled="True" />
+                <Slider Maximum="255" Minimum="0" TickPlacement="TopLeft" Name="slColorG" ValueChanged="ColorSlider_ValueChangedGreen" Margin="3" TickFrequency="1" IsSnapToTickEnabled="True" MouseWheel="SlColorG_MouseWheel" />
             </DockPanel>
             <Rectangle Height="10"/>
             <DockPanel VerticalAlignment="Center" Margin="10">
                 <Label DockPanel.Dock="Left" FontWeight="Bold" VerticalAlignment="Bottom" >B:</Label>
                 <TextBox Text="{Binding ElementName=slColorB, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Center" VerticalContentAlignment="Center" Width="40" />
-                <Slider Maximum="255" Minimum="0" TickPlacement="TopLeft"  Name="slColorB" ValueChanged="ColorSlider_ValueChangedBlue" Margin="3" TickFrequency="1" IsSnapToTickEnabled="True" />
+                <Slider Maximum="255" Minimum="0" TickPlacement="TopLeft"  Name="slColorB" ValueChanged="ColorSlider_ValueChangedBlue" Margin="3" TickFrequency="1" IsSnapToTickEnabled="True" MouseWheel="SlColorB_MouseWheel" />
             </DockPanel>
             <Rectangle Height="30"/>
+            <DockPanel Margin="0">
+
+                <Button x:Name="SampleVideo" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="Sample Video" Click="SampleVideo_Click" Width="180" Height="30" Margin="5"/>
+
+            </DockPanel>
             <DockPanel Margin="10,0">
                 <Button x:Name="RegenerateButton" HorizontalAlignment="Center" VerticalAlignment="Top" Content="Reset"  Width="85" Height="30" Margin="5" Click="Refresh"/>
                 <Button x:Name="CancelButton" Content="Cancel" Click="Cancel_Click" HorizontalAlignment="Center" VerticalAlignment="Top" Width="85" Height="30" Margin="5" />
 
             </DockPanel>
 
-            <DockPanel Margin="10">
+            <DockPanel Margin="0">
 
                 <Button x:Name="ApplyToVideo" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="Apply to Video" Click="ApplyToVideo_Click" Width="180" Height="30" Margin="5"/>
 
             </DockPanel>
-            <DockPanel Margin="10">
-               
-                <Button x:Name="SampleVideo" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="Sample Video" Click="SampleVideo_Click" Width="180" Height="30" Margin="5"/>
 
-            </DockPanel>
             <DockPanel Margin="10">
-                <ProgressBar x:Name="ProgressBar"  Width="200" Height="15" Minimum="0" Maximum="100" Value="{Binding WorkerState}" Visibility="Hidden"></ProgressBar>
+                <ProgressBar x:Name="ProgressBar"  Width="200" Height="15" Minimum="0" Maximum="50" Value="{Binding WorkerState}" Visibility="Hidden"></ProgressBar>
             </DockPanel>
+            <DockPanel>
+                <Label Content="Frames To Convert" HorizontalAlignment="Left" Height="31" Margin="19,5,0,5" Width="125"/>
+                <TextBox x:Name="numOfFrames" HorizontalAlignment="Right" Height="31" Margin="0,5" Width="62"/>
+            </DockPanel>
+            
+
+            <CheckBox Content="Show Full" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="76" Height="15" Margin="19,5,123,5" Checked="CheckBoxChanged" Unchecked="CheckBoxChanged" RenderTransformOrigin="0.522,-0.156"/>
+            <CheckBox Content="CheckBox" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="76" Height="15" Margin="19,5,123,5" Checked="AudioCheckBoxChanged" Unchecked="AudioCheckBoxChanged"/>
+
         </StackPanel>
         <TextBox x:Name="MainImageTextBox" HorizontalAlignment="Left" Height="23" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Width="457" Margin="10,22,0,5" IsReadOnly="True" Visibility="Hidden"/>
         <TextBox x:Name="ConvertedImageTextBox" HorizontalAlignment="Left" Height="23" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Width="457" Margin="10,22,0,5" Grid.Column="1" IsReadOnly="True" Visibility="Hidden"/>

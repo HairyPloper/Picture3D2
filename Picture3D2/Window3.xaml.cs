@@ -194,5 +194,13 @@ namespace Picture3D
             MediaEL.Volume = (double)volumeSlider.Value;
         }
         #endregion
+
+        private void VolumeSlider_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (e.Delta > 0)
+                volumeSlider.Value += 0.05;
+            else
+                volumeSlider.Value -= 0.05;
+        }
     }
 }
