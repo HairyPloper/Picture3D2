@@ -34,9 +34,17 @@
                 <Button x:Name="btnOpen" Content="Open" Click="btnOpen_Click"  
                     Width="50" Height="25" Margin="2"/>
                 <Slider x:Name="volumeSlider" VerticalAlignment="Center" HorizontalAlignment="Right" ValueChanged="ChangeMediaVolume" 
-       Minimum="0" Maximum="1" Value="0.5" Width="90" Margin="250,2,2,2" MouseWheel="VolumeSlider_MouseWheel"/>
+       Minimum="0" Maximum="1" Value="0.5" Width="90" Margin="220,2,2,2" MouseWheel="VolumeSlider_MouseWheel"/>
                 <Image  Source="icovol.ico"  Height="32" Width="32"/>
-
+                <Button Width="15" Height="20" Click="Button_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="question-mark-24.ico" Width="12" Height="12">
+                            <Image.OpacityMask>
+                                <ImageBrush ImageSource="question-mark-24.ico" Stretch="Uniform"/>
+                            </Image.OpacityMask>
+                        </Image>
+                    </StackPanel>
+                </Button>
 
             </StackPanel>
 

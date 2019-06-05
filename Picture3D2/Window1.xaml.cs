@@ -251,6 +251,12 @@ namespace MediaSampleWPF
             else
                 volumeSlider.Value -= 0.05;
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Window4 win2 = new Window4();
+            win2.Show();
+        }
     }
 
     #region Extension Methods

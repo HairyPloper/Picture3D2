@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Picture3D"
         mc:Ignorable="d"
-        Title="MainWindow" Height="530" Width="1200" MinHeight="530" MinWidth="1200">
+        Title="Captured Frame Processing" Height="530" Width="1200" MinHeight="530" MinWidth="1200">
     <Grid>
 
         <Grid.ColumnDefinitions>
