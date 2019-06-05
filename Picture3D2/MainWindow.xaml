@@ -65,13 +65,13 @@
                 <ProgressBar x:Name="ProgressBar"  Width="200" Height="15" Minimum="0" Maximum="50" Value="{Binding WorkerState}" Visibility="Hidden"></ProgressBar>
             </DockPanel>
             <DockPanel>
-                <Label Content="Frames To Convert" HorizontalAlignment="Left" Height="31" Margin="19,5,0,5" Width="125"/>
-                <TextBox x:Name="numOfFrames" HorizontalAlignment="Right" Height="31" Margin="0,5" Width="62"/>
+                <Label Content="Frames To Convert" HorizontalAlignment="Left" Height="31" Margin="19,5,0,5" Width="135"/>
+                <TextBox x:Name="numOfFrames" Text="500" HorizontalAlignment="Right" Height="31" Margin="0,5" Width="62"/>
             </DockPanel>
-            
+
 
             <CheckBox Content="Show Full" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="76" Height="15" Margin="19,5,123,5" Checked="CheckBoxChanged" Unchecked="CheckBoxChanged" RenderTransformOrigin="0.522,-0.156"/>
-            <CheckBox Content="CheckBox" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="76" Height="15" Margin="19,5,123,5" Checked="AudioCheckBoxChanged" Unchecked="AudioCheckBoxChanged"/>
+            <CheckBox Content="Include Audio" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="95" Height="15" Margin="19,5,104,5" Checked="AudioCheckBoxChanged" Unchecked="AudioCheckBoxChanged"/>
 
         </StackPanel>
         <TextBox x:Name="MainImageTextBox" HorizontalAlignment="Left" Height="23" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Width="457" Margin="10,22,0,5" IsReadOnly="True" Visibility="Hidden"/>

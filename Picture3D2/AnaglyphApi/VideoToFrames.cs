@@ -81,7 +81,7 @@ namespace Picture3D.AnaglyphApi
             VideoToFrames.AddAudioToVideo(path);
         }
 
-        public void ReadFromVideoSample(string path, double curentTime, String numberOfFrames)
+        public void ReadFromVideoSample(string path, double curentTime, String numberOfFrames,bool includeAudio)
         {
             int number = 0;
             if (numberOfFrames != "")
@@ -119,9 +119,11 @@ namespace Picture3D.AnaglyphApi
 
             }
             reader.Close();
-            writer.Close();
+
             //string metadata = GetMetadataFromVideo(AnaglyphParameters.PathToRead);
-            VideoToFrames.AddAudioToVideo(path);
+            if (includeAudio)
+                VideoToFrames.AddAudioToVideo(path);
+            writer.Close();
         }
 
 

@@ -25,6 +25,7 @@ namespace Picture3D
         private string baseURI = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         private Window1 _windowOne;
         private bool sample = false;
+        private bool includeAudio = false;
         private double curentTime = 0;
         public static MainWindow mainWindow;
         private string numOfFramesValue = "";
@@ -247,9 +248,9 @@ namespace Picture3D
                     {
                         ExpGenMethod(new Uri(PathToSave));
                     }
-                    catch
+                    catch (Exception exception)
                     {
-
+                        Console.WriteLine(exception);
                     }
                     progressWorker.CancelAsync();
 
@@ -266,13 +267,23 @@ namespace Picture3D
         {
             if (sample)
             {
-                
-                VideoToFrames.GetInstance().ReadFromVideoSample(path.LocalPath,curentTime, numOfFramesValue);
+
+                VideoToFrames.GetInstance().ReadFromVideoSample(path.LocalPath,curentTime, numOfFramesValue,includeAudio);
+              
                 //VideoToFrames.OnProcessDone += (sender, e) => VideoToFramesOnOnProcessDone(sender, e);
                 Application.Current.Dispatcher.Invoke((Action)delegate
                 {
-                    Window3 newWindow = new Window3(path.LocalPath);
-                    newWindow.Show();
+                    if(includeAudio)
+                    {
+                        Window3 newWindow = new Window3(path.LocalPath);
+                        newWindow.Show();
+                    }
+                    else
+                    {
+                        Window3 newWindow = new Window3(AnaglyphParameters.PathToWrite);
+                        newWindow.Show();
+                    }
+
 
                 });
             }
@@ -450,11 +461,9 @@ namespace Picture3D
             var check = (System.Windows.Controls.CheckBox)e.Source;
             if (check.IsChecked.Value)
             {
+                includeAudio = true;
             }
-            else
-            {
-            
-            }
+
         }
     }
 }
