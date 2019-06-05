@@ -1,0 +1,44 @@
+﻿<Window x:Class="Picture3D.Window4"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Picture3D"
+        mc:Ignorable="d"
+        Title="Help" Height="900" Width="1600">
+    <Grid x:Name="HelpWindow">
+        <Label Content="Video Fitlering Window" HorizontalAlignment="Left" Margin="384,10,0,0" VerticalAlignment="Top" FontSize="20" FontWeight="Bold" FontStyle="Italic"/>
+        <Image Source="Help/HelpWindow1.jpg" HorizontalAlignment="Left" Height="415" Margin="968,10,0,0" VerticalAlignment="Top" Width="614"/>
+        <Image Source="Help/HelpWidnow2.jpg" HorizontalAlignment="Left" Height="379" Margin="10,429,0,0" VerticalAlignment="Top" Width="862"/>
+        <Label Content="Captured Frame Processing Window" HorizontalAlignment="Left" Margin="1142,430,0,0" VerticalAlignment="Top" FontSize="20" FontWeight="Bold" FontStyle="Italic"/>
+        <Label Content="Play button:" HorizontalAlignment="Left" Margin="54,114,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14" FontWeight="Bold"/>
+        <Label Content="Startuje prikazivanje videa koji je ucitan u video plejer." HorizontalAlignment="Left" Margin="149,114,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14"/>
+        <Label Content="Open button:" HorizontalAlignment="Left" Margin="54,216,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14" FontWeight="Bold"/>
+        <Label Content="Capture Screenshot button:" HorizontalAlignment="Left" Margin="54,182,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14" FontWeight="Bold"/>
+        <Label Content="Stop button:" HorizontalAlignment="Left" Margin="54,148,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14" FontWeight="Bold"/>
+        <Label Content="Help button:" HorizontalAlignment="Left" Margin="54,284,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14" FontWeight="Bold"/>
+        <Label Content="Volume Bar:" HorizontalAlignment="Left" Margin="54,250,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14" FontWeight="Bold"/>
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="424" VerticalAlignment="Top" Width="1592"/>
+        <Label Content="Prekida video koji se prikazuje i vraca ga na pocetak. " HorizontalAlignment="Left" Margin="152,148,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14"/>
+        <Label Content="Snima pojedinacni frame iz videa koji se trenutno nalazi u video plejeru i sprema ga za dalju obradu." HorizontalAlignment="Left" Margin="245,182,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14"/>
+        <Label Content="Otvara video fajl sa fajl sistema i prikazuje ga u video plejeru." HorizontalAlignment="Left" Margin="155,216,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14"/>
+        <Label Content="Kontrolise jacinu zvuka videa koji se prikazuje (ukoliko postoji)." HorizontalAlignment="Left" Margin="152,250,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14"/>
+        <Label Content="Otvara novi prozor u kome su objasnjene pojedinacne funkcionalnosti aplikacije." HorizontalAlignment="Left" Margin="155,284,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14"/>
+        <Label Content="R-G-B Sliders" HorizontalAlignment="Left" Margin="885,493,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14" FontWeight="Bold"/>
+        <Label Content="Kontrolni panel preko koga se modifikuju R-G-B kanali prikazanog frame-a" HorizontalAlignment="Left" Margin="980,493,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14"/>
+        <Label Content="Appay to Video" HorizontalAlignment="Left" Margin="884,630,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14" FontWeight="Bold"/>
+        <Label Content="Cancel" HorizontalAlignment="Left" Margin="884,596,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14" FontWeight="Bold"/>
+        <Label Content="Reset Button" HorizontalAlignment="Left" Margin="884,562,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14" FontWeight="Bold"/>
+        <Label Content="Show Full" HorizontalAlignment="Left" Margin="884,698,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14" FontWeight="Bold"/>
+        <Label Content="Frames to Convert" HorizontalAlignment="Left" Margin="884,664,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14" FontWeight="Bold"/>
+        <Label Content="Ponistava sve izmene frame-a i vraca sve kanali na prvobitne vrednosti." HorizontalAlignment="Left" Margin="982,562,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14"/>
+        <Label Content="Otkazuje obradu frame-a i vraca se na prethodni prozor aplikacije." HorizontalAlignment="Left" Margin="954,596,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14"/>
+        <Label Content="Vrsi obradu svih frame-ova videa po izabranom filteru i snima ga na zeljenu lokaciju." HorizontalAlignment="Left" Margin="1002,630,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14"/>
+        <Label Content="Broj frame-ova koji ce biti obradjen u Sample video modu." HorizontalAlignment="Left" Margin="1032,664,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14"/>
+        <Label Content="Sakriva originalni frame i prikazuje samo onaj koji se obradjuje preko celog prozora." HorizontalAlignment="Left" Margin="986,698,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14"/>
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="445" Margin="0,424,0,0" VerticalAlignment="Top" Width="1592"/>
+        <Label Content="Sample Video" HorizontalAlignment="Left" Margin="885,528,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14" FontWeight="Bold"/>
+        <Label Content="Obradjuje ucitan i generise uzorak koji ce biti identican krajnjem obradjenom videu. " HorizontalAlignment="Left" Margin="980,528,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.605,-0.346" FontSize="14"/>
+
+    </Grid>
+</Window>
