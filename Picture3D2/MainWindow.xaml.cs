@@ -29,23 +29,10 @@ namespace Picture3D
         private double curentTime = 0;
         public static MainWindow mainWindow;
         private string numOfFramesValue = "";
-        private int _workerState;
-        public int WorkerState
-        {
-            get { return _workerState; }
-            set
-            {
-                _workerState = value;
-                if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs("WorkerState"));
-            }
-        }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        public CancellationTokenSource tokenSource = new CancellationTokenSource();
 
-
-        public MainWindow(Window1 win, int n,double  curentTime)
+        public MainWindow(Window1 win, int n, double curentTime)
         {
             this.n = n;
             this.curentTime = curentTime;
@@ -56,34 +43,9 @@ namespace Picture3D
             worker.RunWorkerCompleted += worker_RunWorkerCompleted;
             worker.WorkerReportsProgress = true;
             mainWindow = this;
-
-            progressWorker.DoWork += progressWorker_DoWork;
-            progressWorker.WorkerReportsProgress = true;
-            progressWorker.RunWorkerCompleted += progressWorker_RunWorkerCompleted;
-            progressWorker.ProgressChanged += ProgressWorker_ProgressChanged;
-            progressWorker.WorkerSupportsCancellation = true;
-            //progressWorker.RunWorkerAsync();
         }
 
-        private void ProgressWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-
-            ProgressBar.Value = e.ProgressPercentage;
-        }
-
-        public void ChangeProgressBar(int i)
-        {
-            ProgressBar.Value = i;
-        }
-
-        public static MainWindow GetMainWindow()
-        {
-            return mainWindow;
-        }
         private readonly BackgroundWorker worker = new BackgroundWorker();
-        private readonly BackgroundWorker progressWorker = new BackgroundWorker();
-
-        private string CurrentAlgorythm { get; set; }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
@@ -108,7 +70,6 @@ namespace Picture3D
             AnaglyphParameters.ResetParameters();
             SetFilterValues();
             filterPanel.IsEnabled = true;
-            //ConvertedImage.Source = null;
 
         }
 
@@ -129,58 +90,6 @@ namespace Picture3D
             RegenerateButton_Click(this, e);
         }
 
-        private void SaveBitmapImage(Bitmap image, out string outfilename)
-        {
-            outfilename = baseURI + @"\ScreenShots\Capture" + n + "-CONVERTED.jpg";
-            try
-            {
-                image.Save(outfilename, ImageFormat.Jpeg);
-                image.Dispose();
-
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine(e);
-            }
-
-        }
-
-        private void progressWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            var worker1 = sender as BackgroundWorker;
-            worker1.ReportProgress(0);
-            for (int i = 0; i <= 98; i++)
-            {
-                if (worker1.CancellationPending)
-                {
-                    worker1.ReportProgress(100);
-                    Thread.Sleep(100);
-                    e.Cancel = true;
-                    return;
-                }
-                Thread.Sleep(100 + i * 30);
-                worker1.ReportProgress(i);
-            }
-            //TO LONG
-            while (true)
-            {
-                if (worker1.CancellationPending)
-                {
-                    worker1.ReportProgress(100);
-                    Thread.Sleep(100);
-                    e.Cancel = true;
-                    break;
-                }
-            }
-        }
-
-        private void progressWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            //MessageBox.Show("Process finished!");
-            ProgressBar.Visibility = Visibility.Hidden;
-            ProgressBar.Value = 0;
-        }
-
         private void worker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundHelperRequest argmunets = (BackgroundHelperRequest)e.Argument;
@@ -195,7 +104,6 @@ namespace Picture3D
                 Location = "",
             };
 
-            //newImage.Dispose();
         }
         private void worker_RunWorkerCompleted(object sender,
             RunWorkerCompletedEventArgs e)
@@ -235,9 +143,8 @@ namespace Picture3D
             {
                 return;
             }
-            progressWorker.RunWorkerAsync();
             ProgressBar.Visibility = Visibility.Visible;
-             numOfFramesValue = numOfFrames.Text;
+            numOfFramesValue = numOfFrames.Text;
             Task output = null;
             sample = true;
             try
@@ -252,7 +159,6 @@ namespace Picture3D
                     {
                         Console.WriteLine(exception);
                     }
-                    progressWorker.CancelAsync();
 
                 });
             }
@@ -267,13 +173,13 @@ namespace Picture3D
         {
             if (sample)
             {
+                VideoToFrames.GetInstance().OnFrameDone += this.FrameDone;
+                VideoToFrames.GetInstance().OnProcessDone += this.VideoToFramesOnProcessDone;
+                VideoToFrames.GetInstance().ReadFromVideoSample(path.LocalPath, curentTime, numOfFramesValue, includeAudio);
 
-                VideoToFrames.GetInstance().ReadFromVideoSample(path.LocalPath,curentTime, numOfFramesValue,includeAudio);
-              
-                //VideoToFrames.OnProcessDone += (sender, e) => VideoToFramesOnOnProcessDone(sender, e);
                 Application.Current.Dispatcher.Invoke((Action)delegate
                 {
-                    if(includeAudio)
+                    if (includeAudio)
                     {
                         Window3 newWindow = new Window3(path.LocalPath);
                         newWindow.Show();
@@ -290,6 +196,7 @@ namespace Picture3D
             else
             {
                 VideoToFrames.GetInstance().ReadFromVideo(path.LocalPath);
+                VideoToFrames.GetInstance().OnFrameDone += this.FrameDone;
 
                 Application.Current.Dispatcher.Invoke((Action)delegate
                 {
@@ -298,13 +205,26 @@ namespace Picture3D
 
                 });
             }
-            notifyDone();
         }
 
-        private void VideoToFramesOnOnProcessDone(object sender, EventArgs e)
+        private void VideoToFramesOnProcessDone(object sender, EventArgs e)
         {
-            var ev = (NotifyEventArgs)e;
-            ProgressBar.Value = ev.Progress;
+            this.Dispatcher.Invoke(() =>
+            {
+                ProgressBar.Value = 0;
+                ProgressBar.Visibility = Visibility.Hidden;
+            });
+        }
+
+        private void FrameDone(object sender, EventArgs e)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                var ev = (NotifyEventArgs)e;
+                double prog = ev.Progress / (double)ev.Total;
+
+                ProgressBar.Value = prog * 100;
+            });
         }
 
         private void ApplyToVideo_Click(dynamic sender, RoutedEventArgs e)
@@ -315,7 +235,8 @@ namespace Picture3D
                 return;
             }
 
-           progressWorker.RunWorkerAsync();
+            //progressWorker.RunWorkerAsync();
+
             ProgressBar.Visibility = Visibility.Visible;
             sample = false;
             try
@@ -330,7 +251,6 @@ namespace Picture3D
                     {
 
                     }
-                    progressWorker.CancelAsync();
                 });
             }
             catch (Exception exception)
@@ -338,16 +258,6 @@ namespace Picture3D
                 Console.WriteLine(exception);
                 System.Windows.Forms.MessageBox.Show(exception.Message);
             }
-        }
-
-        public void notifyDone()
-        {
-            progressWorker.CancelAsync();
-        }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private void RegenerateButton_Click(object sender, RoutedEventArgs e)

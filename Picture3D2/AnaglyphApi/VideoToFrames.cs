@@ -7,6 +7,7 @@ using Accord.DirectSound;
 using AnaglyphGenerator.Models;
 using System.IO;
 using System.Diagnostics;
+using System.Threading;
 
 
 namespace Picture3D.AnaglyphApi
@@ -19,11 +20,14 @@ namespace Picture3D.AnaglyphApi
         FilterInfoCollection CaptureDdevice;
         private WaveFileAudioSource audioSoruce;
 
+        public delegate void OnFrameDoneHandler(object sender, EventArgs e);
+
+        public event OnFrameDoneHandler OnFrameDone;
         public delegate void OnProcessDoneHandler(object sender, EventArgs e);
 
-        public static  event OnProcessDoneHandler OnProcessDone;
+        public event OnProcessDoneHandler OnProcessDone;
 
-       
+
         Uri pathToFile;
 
 
@@ -32,8 +36,8 @@ namespace Picture3D.AnaglyphApi
 
             reader = new VideoFileReader();
             writer = new VideoFileWriter();
-           
-        
+
+
         }
         public static VideoToFrames GetInstance()
         {
@@ -42,18 +46,19 @@ namespace Picture3D.AnaglyphApi
             return videoToFrames;
 
         }
-         public void ReadFromVideo(string path)
+        public void ReadFromVideo(string path)
         {
             pathToFile = new Uri(AnaglyphParameters.VideoPath.LocalPath);
-           AnaglyphParameters.PathToRead = pathToFile.LocalPath;
+            AnaglyphParameters.PathToRead = pathToFile.LocalPath;
             AnaglyphParameters.PathToWrite = pathToFile.LocalPath.Split('.')[0] + "1.mp4";
             reader.Open(pathToFile.LocalPath);
-      
+
             SetWriter(reader, writer);
 
 
             for (int i = 0; i < reader.FrameCount; i++)
             {
+                OnOnFrameDone(i, (int)reader.FrameCount);
                 try
                 {
 
@@ -79,13 +84,14 @@ namespace Picture3D.AnaglyphApi
             writer.Close();
 
             VideoToFrames.AddAudioToVideo(path);
+            OnOnProcessDone();
         }
 
-        public void ReadFromVideoSample(string path, double curentTime, String numberOfFrames,bool includeAudio)
+        public void ReadFromVideoSample(string path, double curentTime, String numberOfFrames, bool includeAudio)
         {
             int number = 0;
             if (numberOfFrames != "")
-               number = Convert.ToInt32(numberOfFrames);
+                number = Convert.ToInt32(numberOfFrames);
             pathToFile = new Uri(AnaglyphParameters.VideoPath.LocalPath);
             reader.Open(pathToFile.LocalPath);
             int startingFrame = Convert.ToInt32(curentTime * reader.FrameRate.Value);
@@ -94,19 +100,19 @@ namespace Picture3D.AnaglyphApi
             AnaglyphParameters.PathToWrite = pathToFile.LocalPath.Split('.')[0] + "1.mp4";
             reader.Open(pathToFile.LocalPath);
             SetWriter(reader, writer);
+            int j = 0;
             for (int i = startingFrame; i < endingFrame; i++)
             {
-
+                OnOnFrameDone(j, number);
                 try
                 {
                     using (Bitmap videoFrame = reader.ReadVideoFrame(i))
                     {
                         using (Bitmap videoFrameChanged = new Fitler().Calc(videoFrame))
                         {
-                            
-                                writer.WriteVideoFrame(videoFrameChanged, (uint) i);
-                               
-                            
+
+                            writer.WriteVideoFrame(videoFrameChanged, (uint)i);
+
                             videoFrameChanged.Dispose();
                         }
                     }
@@ -117,6 +123,7 @@ namespace Picture3D.AnaglyphApi
                     Console.WriteLine(e.StackTrace);
                 }
 
+                j++;
             }
             reader.Close();
 
@@ -124,6 +131,7 @@ namespace Picture3D.AnaglyphApi
             if (includeAudio)
                 VideoToFrames.AddAudioToVideo(path);
             writer.Close();
+            OnOnProcessDone();
         }
 
 
@@ -214,41 +222,41 @@ namespace Picture3D.AnaglyphApi
                 return ms.ToArray();
             }
         }
-         public static void  TakeAudioFromVideo(string pathToRead, string pathToWrite)
+        public static void TakeAudioFromVideo(string pathToRead, string pathToWrite)
         {
             var inputFile = pathToRead;
-                var outputFile = pathToRead.Split('.')[0] + ".aac";
-                var mp3out = "";
-                var ffmpegProcess = new Process();
-                ffmpegProcess.StartInfo.UseShellExecute = false;
-                ffmpegProcess.StartInfo.RedirectStandardInput = true;
-                ffmpegProcess.StartInfo.RedirectStandardOutput = true;
-                ffmpegProcess.StartInfo.RedirectStandardError = true;
-                ffmpegProcess.StartInfo.CreateNoWindow = true;
+            var outputFile = pathToRead.Split('.')[0] + ".aac";
+            var mp3out = "";
+            var ffmpegProcess = new Process();
+            ffmpegProcess.StartInfo.UseShellExecute = false;
+            ffmpegProcess.StartInfo.RedirectStandardInput = true;
+            ffmpegProcess.StartInfo.RedirectStandardOutput = true;
+            ffmpegProcess.StartInfo.RedirectStandardError = true;
+            ffmpegProcess.StartInfo.CreateNoWindow = true;
             ffmpegProcess.StartInfo.FileName = Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.FullName, "ffmpeg\\ffmpeg.exe");//"C:\\Users\\Filip\\Source\\Repos\\Picture3D2\\Picture3D2\\ffmpeg-20190323-5fceac1-win32-shared\\bin\\ffmpeg.exe";//@"\ffmpeg-20190323-5fceac1-win32-shared\bin\ffmpeg.exe"; 
-                                                                                                                                                                // ffmpegProcess.StartInfo.Arguments = " -i " + inputFile + " -vn -f mp3 -ab 320k output " + outputFile;
+                                                                                                                                                     // ffmpegProcess.StartInfo.Arguments = " -i " + inputFile + " -vn -f mp3 -ab 320k output " + outputFile;
             ffmpegProcess.StartInfo.Arguments = "-i " + inputFile + " -vn -acodec copy " + outputFile; //ffmpeg -i input-video.avi -vn -acodec copy output-audio.aac
             ffmpegProcess.Start();
-                ffmpegProcess.StandardOutput.ReadToEnd();
-               mp3out = ffmpegProcess.StandardError.ReadToEnd();
-                ffmpegProcess.WaitForExit();
-                if (!ffmpegProcess.HasExited)
-                {
-                    ffmpegProcess.Kill();
-                }
+            ffmpegProcess.StandardOutput.ReadToEnd();
+            mp3out = ffmpegProcess.StandardError.ReadToEnd();
+            ffmpegProcess.WaitForExit();
+            if (!ffmpegProcess.HasExited)
+            {
+                ffmpegProcess.Kill();
+            }
             Console.WriteLine(mp3out);
             ffmpegProcess.Close();
-           
-        
-    }
-        
-        public static void AddAudioToVideo( string path)
+
+
+        }
+
+        public static void AddAudioToVideo(string path)
         {
             Random rnd = new Random();
             int num = rnd.Next(2, 100);
             TakeAudioFromVideo(AnaglyphParameters.PathToRead, AnaglyphParameters.PathToWrite);
             var inputFile = AnaglyphParameters.PathToWrite;
-            var outputFile =path;
+            var outputFile = path;
             var audioFile = AnaglyphParameters.PathToRead.Split('.')[0] + ".aac";
             var mp3out = "";
             var ffmpegProcess = new Process();
@@ -259,7 +267,7 @@ namespace Picture3D.AnaglyphApi
             ffmpegProcess.StartInfo.CreateNoWindow = true;
             ffmpegProcess.StartInfo.FileName = Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.FullName, "ffmpeg\\ffmpeg.exe");//"C:\\Users\\Filip\\Source\\Repos\\Picture3D2\\Picture3D2\\ffmpeg-20190323-5fceac1-win32-shared\\bin\\ffmpeg.exe";//@"\ffmpeg-20190323-5fceac1-win32-shared\bin\ffmpeg.exe"; 
             //ffmpeg -i video.avi -i audio.mp3 -codec copy -shortest output.avi                                                                             // ffmpegProcess.StartInfo.Arguments = " -i " + inputFile + " -vn -f mp3 -ab 320k output " + outputFile;
-            ffmpegProcess.StartInfo.Arguments = "-i " + inputFile + " -i " +audioFile+ " -codec copy -shortest " + outputFile; 
+            ffmpegProcess.StartInfo.Arguments = "-i " + inputFile + " -i " + audioFile + " -codec copy -shortest " + outputFile;
             ffmpegProcess.Start();
             ffmpegProcess.StandardOutput.ReadToEnd();
             mp3out = ffmpegProcess.StandardError.ReadToEnd();
@@ -275,14 +283,14 @@ namespace Picture3D.AnaglyphApi
 
 
         }
-        
+
         public static string GetMetadataFromVideo(string pathToRead)
         {
             Random rnd = new Random();
             int num = rnd.Next(2, 100);
-   
+
             var inputFile = pathToRead;
-            var outputFile = AppDomain.CurrentDomain.BaseDirectory+"metadata.txt";
+            var outputFile = AppDomain.CurrentDomain.BaseDirectory + "metadata.txt";
             var meta = "";
             var ffmpegProcess = new Process();
             ffmpegProcess.StartInfo.UseShellExecute = false;
@@ -292,7 +300,7 @@ namespace Picture3D.AnaglyphApi
             ffmpegProcess.StartInfo.CreateNoWindow = true;
             ffmpegProcess.StartInfo.FileName = Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.FullName, "ffmpeg\\ffmpeg.exe");//"C:\\Users\\Filip\\Source\\Repos\\Picture3D2\\Picture3D2\\ffmpeg-20190323-5fceac1-win32-shared\\bin\\ffmpeg.exe";//@"\ffmpeg-20190323-5fceac1-win32-shared\bin\ffmpeg.exe"; 
             //ffmpeg -i in.mp4 -f ffmetadata in.txt                                                                       // ffmpegProcess.StartInfo.Arguments = " -i " + inputFile + " -vn -f mp3 -ab 320k output " + outputFile;
-            ffmpegProcess.StartInfo.Arguments = "-i " + inputFile+ " -f ffmetadata " + outputFile;
+            ffmpegProcess.StartInfo.Arguments = "-i " + inputFile + " -f ffmetadata " + outputFile;
             ffmpegProcess.Start();
             ffmpegProcess.StandardOutput.ReadToEnd();
             meta = ffmpegProcess.StandardError.ReadToEnd();
@@ -309,15 +317,20 @@ namespace Picture3D.AnaglyphApi
 
         }
 
-        protected virtual void OnOnProcessDone(int segment, int progresss)
+        protected virtual void OnOnFrameDone(int frameNum, int totalNum)
         {
-            OnProcessDone?.Invoke(this, new NotifyEventArgs{Progress = progresss,Segment = segment});
+            OnFrameDone?.Invoke(this, new NotifyEventArgs { Progress = frameNum, Total = totalNum });
+        }
+
+        protected virtual void OnOnProcessDone()
+        {
+            OnProcessDone?.Invoke(this, EventArgs.Empty);
         }
     }
 
     public class NotifyEventArgs : EventArgs
     {
         public int Progress;
-        public int Segment;
+        public int Total;
     }
 }
