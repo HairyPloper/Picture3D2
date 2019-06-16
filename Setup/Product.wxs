@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"><?define Picture3D_TargetDir=$(var.Picture3D.TargetDir)?>
+	<Product Id="331993d2-ba40-4ec0-b16a-2080e7a129b9" Name="Setup" Language="1033" Version="1.0.0.0" Manufacturer="Elfak" UpgradeCode="a12f4b05-5b12-4219-8369-7ac8782abb33">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+    <WixVariable Id="WixUIBannerBmp" Value="Images\installer_top-banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="Images\installer_background.bmp" />
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.ProjectDir)\license.rtf" />
+
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    <UIRef Id="WixUI_InstallDir" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate EmbedCab="yes" />
+
+    <Feature Id="ProductFeature" Title="Picture 3D" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentRef Id="ApplicationShortcut" />
+      <ComponentRef Id="ApplicationShortcutDesktop" />
+    </Feature>
+  </Product>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="Picture 3D" />
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="Picture 3D"></Directory>
+      </Directory>
+      <Directory Id="DesktopFolder" Name="Desktop"></Directory>
+    </Directory>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="ApplicationShortcut" Guid="9bd13330-6540-406f-a3a8-d2f7c69ae7f9">
+        <Shortcut Id="ApplicationStartMenuShortcut" Name="Picture 3D" Description="Picture 3D" Target="[INSTALLFOLDER]Picture3D.exe" WorkingDirectory="INSTALLFOLDER" />
+        <RemoveFolder Id="RemoveApplicationProgramsFolder" Directory="ApplicationProgramsFolder" On="uninstall" />
+        <RegistryValue Root="HKCU" Key="Software\Picture 3D" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+    <DirectoryRef Id="DesktopFolder">
+      <Component Id="ApplicationShortcutDesktop" Guid="cde1e030-eb64-49a2-b7b8-400b379c2d1a">
+        <Shortcut Id="ApplicationDesktopShortcut" Name="Picture 3D" Description="Picture 3D" Target="[INSTALLFOLDER]Picture3D.exe" WorkingDirectory="INSTALLFOLDER" />
+        <RemoveFolder Id="RemoveDesktopFolder" Directory="DesktopFolder" On="uninstall" />
+        <RegistryValue Root="HKCU" Key="Software\Picture 3D" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+			<!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
+			<!-- <Component Id="ProductComponent"> -->
+				<!-- TODO: Insert files, registry keys, and other resources here. -->
+			<!-- </Component> -->
+			<Component Id="SharpDX.DirectSound.dll" Guid="4e15a9bf-5a27-410e-b89a-1747d221f228">
+			  <File Id="SharpDX.DirectSound.dll" Name="SharpDX.DirectSound.dll" Source="$(var.Picture3D_TargetDir)SharpDX.DirectSound.dll" />
+			</Component>
+			<Component Id="Accord.Math.Core.dll" Guid="010dad64-c988-4642-969c-2fcde553d0c2">
+			  <File Id="Accord.Math.Core.dll" Name="Accord.Math.Core.dll" Source="$(var.Picture3D_TargetDir)Accord.Math.Core.dll" />
+			</Component>
+			<Component Id="Accord.Math.dll" Guid="af07056b-6ac2-4d58-afd7-10238bf0fa49">
+			  <File Id="Accord.Math.dll" Name="Accord.Math.dll" Source="$(var.Picture3D_TargetDir)Accord.Math.dll" />
+			</Component>
+			<Component Id="Accord.Audio.dll" Guid="fea08964-2a8f-4220-8718-03b8bdc11097">
+			  <File Id="Accord.Audio.dll" Name="Accord.Audio.dll" Source="$(var.Picture3D_TargetDir)Accord.Audio.dll" />
+			</Component>
+			<Component Id="SharpDX.dll" Guid="52267d01-f399-49f6-b680-389b496c35ef">
+			  <File Id="SharpDX.dll" Name="SharpDX.dll" Source="$(var.Picture3D_TargetDir)SharpDX.dll" />
+			</Component>
+			<Component Id="AForge.dll" Guid="a24c6e40-49bf-4782-8aac-bc1e30f4f9a8">
+			  <File Id="AForge.dll" Name="AForge.dll" Source="$(var.Picture3D_TargetDir)AForge.dll" />
+			</Component>
+			<Component Id="AForge.Video.dll" Guid="1e3387e4-6ccb-4597-b28e-dc95713bfba1">
+			  <File Id="AForge.Video.dll" Name="AForge.Video.dll" Source="$(var.Picture3D_TargetDir)AForge.Video.dll" />
+			</Component>
+			<Component Id="Accord.Video.dll" Guid="34550a1c-3840-45d3-a0e8-302f8d9dff54">
+			  <File Id="Accord.Video.dll" Name="Accord.Video.dll" Source="$(var.Picture3D_TargetDir)Accord.Video.dll" />
+			</Component>
+			<Component Id="Accord.dll" Guid="59fd7485-9f03-4b80-9c41-c1981b48dfe9">
+			  <File Id="Accord.dll" Name="Accord.dll" Source="$(var.Picture3D_TargetDir)Accord.dll" />
+			</Component>
+			<Component Id="Accord.Audio.DirectSound.dll" Guid="eda582fe-29c7-46ea-8eda-04e9fde131f2">
+			  <File Id="Accord.Audio.DirectSound.dll" Name="Accord.Audio.DirectSound.dll" Source="$(var.Picture3D_TargetDir)Accord.Audio.DirectSound.dll" />
+			</Component>
+			<Component Id="Accord.Video.FFMPEG.dll" Guid="5b37635f-b9cc-42c5-b4ba-94853a3895c4">
+			  <File Id="Accord.Video.FFMPEG.dll" Name="Accord.Video.FFMPEG.dll" Source="$(var.Picture3D_TargetDir)Accord.Video.FFMPEG.dll" />
+			</Component>
+			<Component Id="Picture3D.exe.config" Guid="247f95c1-66a6-43e9-8a13-e64afdfa3b99">
+			  <File Id="Picture3D.exe.config" Name="Picture3D.exe.config" Source="$(var.Picture3D_TargetDir)Picture3D.exe.config" />
+			</Component>
+			<Component Id="Picture3D.exe" Guid="ac0c9922-41f5-4abb-ab84-b9da35a32378">
+			  <File Id="Picture3D.exe" Name="Picture3D.exe" Source="$(var.Picture3D_TargetDir)Picture3D.exe" />
+			</Component>
+			<Component Id="AForge.Video.DirectShow.dll" Guid="1a1fe7a0-1956-42aa-ac64-0ca99c78a0c4">
+			  <File Id="AForge.Video.DirectShow.dll" Name="AForge.Video.DirectShow.dll" Source="$(var.Picture3D_TargetDir)AForge.Video.DirectShow.dll" />
+			</Component>
+			<Component Id="Accord.dll.config" Guid="8817c5d8-ce87-453d-9efc-36af4f683857">
+			  <File Id="Accord.dll.config" Name="Accord.dll.config" Source="$(var.Picture3D_TargetDir)Accord.dll.config" />
+			</Component>
+		</ComponentGroup>
+	</Fragment>
+</Wix>
