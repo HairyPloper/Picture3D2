@@ -50,7 +50,7 @@ namespace Picture3D.AnaglyphApi
         {
             pathToFile = new Uri(AnaglyphParameters.VideoPath.LocalPath);
             AnaglyphParameters.PathToRead = pathToFile.LocalPath;
-            AnaglyphParameters.PathToWrite = pathToFile.LocalPath.Split('.')[0] + "1.mp4";
+            AnaglyphParameters.PathToWrite = path.Split('.')[0] + "1.mp4";
             reader.Open(pathToFile.LocalPath);
 
             SetWriter(reader, writer);
@@ -97,7 +97,7 @@ namespace Picture3D.AnaglyphApi
             int startingFrame = Convert.ToInt32(curentTime * reader.FrameRate.Value);
             int endingFrame = Convert.ToInt32(startingFrame + number);
             AnaglyphParameters.PathToRead = pathToFile.LocalPath;
-            AnaglyphParameters.PathToWrite = pathToFile.LocalPath.Split('.')[0] + "1.mp4";
+            AnaglyphParameters.PathToWrite = path.Split('.')[0] + "1.mp4";// pathToFile.LocalPath.Split('.')[0] + "1.mp4";
             reader.Open(pathToFile.LocalPath);
             SetWriter(reader, writer);
             int j = 0;
@@ -126,11 +126,9 @@ namespace Picture3D.AnaglyphApi
                 j++;
             }
             reader.Close();
-
-            //string metadata = GetMetadataFromVideo(AnaglyphParameters.PathToRead);
-            if (includeAudio)
-                VideoToFrames.AddAudioToVideo(path);
             writer.Close();
+            //string metadata = GetMetadataFromVideo(AnaglyphParameters.PathToRead);
+
             OnOnProcessDone();
         }
 
@@ -226,6 +224,9 @@ namespace Picture3D.AnaglyphApi
         {
             var inputFile = pathToRead;
             var outputFile = pathToRead.Split('.')[0] + ".aac";
+            AnaglyphParameters.AudioFile = outputFile;
+           if( File.Exists(AnaglyphParameters.AudioFile))
+                File.Delete(AnaglyphParameters.AudioFile);
             var mp3out = "";
             var ffmpegProcess = new Process();
             ffmpegProcess.StartInfo.UseShellExecute = false;
@@ -254,10 +255,22 @@ namespace Picture3D.AnaglyphApi
         {
             Random rnd = new Random();
             int num = rnd.Next(2, 100);
-            TakeAudioFromVideo(AnaglyphParameters.PathToRead, AnaglyphParameters.PathToWrite);
+            TakeAudioFromVideo(AnaglyphParameters.PathToRead,path);
             var inputFile = AnaglyphParameters.PathToWrite;
             var outputFile = path;
-            var audioFile = AnaglyphParameters.PathToRead.Split('.')[0] + ".aac";
+            var audioFile = AnaglyphParameters.AudioFile;
+            try
+            {
+                
+                if(File.Exists(audioFile))
+                   AnaglyphParameters.HasSound = true;
+            }
+            catch(Exception e)
+            {
+                AnaglyphParameters.HasSound = false;
+            }
+     
+                                   // AnaglyphParameters.PathToRead.Split('.')[0] + ".aac";
             var mp3out = "";
             var ffmpegProcess = new Process();
             ffmpegProcess.StartInfo.UseShellExecute = false;
@@ -277,6 +290,7 @@ namespace Picture3D.AnaglyphApi
                 ffmpegProcess.Kill();
             }
             Console.WriteLine(mp3out);
+            if(File.Exists(outputFile) && AnaglyphParameters.HasSound)
             File.Delete(inputFile);
             File.Delete(audioFile);
             ffmpegProcess.Close();
