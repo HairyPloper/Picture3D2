@@ -179,16 +179,16 @@ namespace Picture3D
 
                 Application.Current.Dispatcher.Invoke((Action)delegate
                 {
-                    if (includeAudio)
-                    {
-                        Window3 newWindow = new Window3(path.LocalPath);
-                        newWindow.Show();
-                    }
-                    else
-                    {
+                   // if (includeAudio)
+                   // {
                         Window3 newWindow = new Window3(AnaglyphParameters.PathToWrite);
                         newWindow.Show();
-                    }
+                 //   }
+                    //else
+                    //{
+                    //    Window3 newWindow = new Window3(AnaglyphParameters.PathToWrite);
+                    //    newWindow.Show();
+                    //}
 
 
                 });
@@ -200,8 +200,17 @@ namespace Picture3D
 
                 Application.Current.Dispatcher.Invoke((Action)delegate
                 {
+                    if(!File.Exists(AnaglyphParameters.PathToWrite) && AnaglyphParameters.HasSound)
+                    {
                     Window3 newWindow = new Window3(path.LocalPath);
-                    newWindow.Show();
+                        newWindow.Show();
+                    }
+                    else
+                    {
+                        Window3 newWindow = new Window3(AnaglyphParameters.PathToWrite);
+                        newWindow.Show();
+                    }
+
 
                 });
             }
@@ -245,7 +254,7 @@ namespace Picture3D
                 {
                     try
                     {
-                        ExpGenMethod(AnaglyphParameters.VideoPath);
+                        ExpGenMethod(new Uri(PathToSave));
                     }
                     catch (Exception exception)
                     {
@@ -366,14 +375,14 @@ namespace Picture3D
             }
         }
 
-        private void AudioCheckBoxChanged(object sender, RoutedEventArgs e)
-        {
-            var check = (System.Windows.Controls.CheckBox)e.Source;
-            if (check.IsChecked.Value)
-            {
-                includeAudio = true;
-            }
+        //private void AudioCheckBoxChanged(object sender, RoutedEventArgs e)
+        //{
+        //    var check = (System.Windows.Controls.CheckBox)e.Source;
+        //    if (check.IsChecked.Value)
+        //    {
+        //        includeAudio = true;
+        //    }
 
-        }
+        //}
     }
 }
