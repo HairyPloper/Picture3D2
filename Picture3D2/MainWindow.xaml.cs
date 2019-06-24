@@ -195,8 +195,9 @@ namespace Picture3D
             }
             else
             {
-                VideoToFrames.GetInstance().ReadFromVideo(path.LocalPath);
                 VideoToFrames.GetInstance().OnFrameDone += this.FrameDone;
+                VideoToFrames.GetInstance().OnProcessDone += this.VideoToFramesOnProcessDone;
+                VideoToFrames.GetInstance().ReadFromVideo(path.LocalPath);
 
                 Application.Current.Dispatcher.Invoke((Action)delegate
                 {
@@ -234,8 +235,6 @@ namespace Picture3D
             {
                 return;
             }
-
-            //progressWorker.RunWorkerAsync();
 
             ProgressBar.Visibility = Visibility.Visible;
             sample = false;
