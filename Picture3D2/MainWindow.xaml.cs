@@ -179,18 +179,8 @@ namespace Picture3D
 
                 Application.Current.Dispatcher.Invoke((Action)delegate
                 {
-                   // if (includeAudio)
-                   // {
-                        Window3 newWindow = new Window3(AnaglyphParameters.PathToWrite);
+                    Window3 newWindow = new Window3(AnaglyphParameters.PathToWrite);
                         newWindow.Show();
-                 //   }
-                    //else
-                    //{
-                    //    Window3 newWindow = new Window3(AnaglyphParameters.PathToWrite);
-                    //    newWindow.Show();
-                    //}
-
-
                 });
             }
             else
